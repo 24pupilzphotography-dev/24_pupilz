@@ -13,7 +13,7 @@ export default function Footer() {
                     </div>
 
                     <div className="flex justify-center gap-6">
-                        <a href="#" className="hover:text-accent transition-colors">
+                        <a href="https://www.instagram.com/24_pupilz__photography/" target="_blank" rel="noopener noreferrer" className="hover:text-accent transition-colors">
                             <Instagram className="w-6 h-6" />
                         </a>
                         <a href="#" className="hover:text-accent transition-colors">

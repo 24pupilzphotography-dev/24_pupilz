@@ -8,9 +8,9 @@ const photos = [
     { id: 1, src: "https://images.unsplash.com/photo-1511895426328-dc8714191300?q=80&w=2070&auto=format&fit=crop", alt: "Wedding Photography" },
     { id: 2, src: "https://images.unsplash.com/photo-1519741497674-611481863552?q=80&w=2070&auto=format&fit=crop", alt: "Portrait Photography" },
     { id: 3, src: "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?q=80&w=1964&auto=format&fit=crop", alt: "Event Photography" },
-    { id: 4, src: "https://images.unsplash.com/photo-1554048612-387768052bf7?q=80&w=2053&auto=format&fit=crop", alt: "Fashion Photography" },
-    { id: 5, src: "https://images.unsplash.com/photo-1537633552985-df8429e8048b?q=80&w=2070&auto=format&fit=crop", alt: "Nature Photography" },
-    { id: 6, src: "https://images.unsplash.com/photo-1520854221256-17451cc330e7?q=80&w=2070&auto=format&fit=crop", alt: "Urban Photography" },
+    { id: 4, src: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=2064&auto=format&fit=crop", alt: "Fashion Photography" },
+    { id: 5, src: "https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?q=80&w=2074&auto=format&fit=crop", alt: "Nature Photography" },
+    { id: 6, src: "https://images.unsplash.com/photo-1449824913929-2b3a3e3db216?q=80&w=2078&auto=format&fit=crop", alt: "Urban Photography" },
 ];
 
 export default function Gallery() {

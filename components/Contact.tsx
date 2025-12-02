@@ -37,7 +37,7 @@ export default function Contact() {
                                 </div>
                                 <div>
                                     <p className="text-sm text-gray-400 uppercase tracking-wider">Phone</p>
-                                    <p className="text-lg">+1 (555) 123-4567</p>
+                                    <p className="text-lg">6369409172</p>
                                 </div>
                             </div>
 
@@ -57,7 +57,7 @@ export default function Contact() {
                                 </div>
                                 <div>
                                     <p className="text-sm text-gray-400 uppercase tracking-wider">Location</p>
-                                    <p className="text-lg">New York, NY</p>
+                                    <p className="text-lg">Sathyamangalam, Erode</p>
                                 </div>
                             </div>
                         </div>

@@ -8,26 +8,26 @@ const services = [
     {
         title: "Wedding Photography",
         description: "Capturing the magic of your special day with cinematic storytelling and candid moments.",
-        price: "Starting at $2,500",
         Icon: Heart,
+        image: "https://images.unsplash.com/photo-1519741497674-611481863552?q=80&w=2070&auto=format&fit=crop"
     },
     {
         title: "Portrait Sessions",
         description: "Professional headshots, family portraits, and creative personal branding sessions.",
-        price: "Starting at $300",
         Icon: Users,
+        image: "https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?q=80&w=1964&auto=format&fit=crop"
     },
     {
         title: "Event Coverage",
         description: "Comprehensive coverage for corporate events, parties, and special occasions.",
-        price: "Starting at $150/hr",
         Icon: Camera,
+        image: "https://images.unsplash.com/photo-1511578314322-379afb476865?q=80&w=2071&auto=format&fit=crop"
     },
     {
         title: "Commercial Shoots",
         description: "High-quality product and lifestyle photography to elevate your brand image.",
-        price: "Custom Quote",
         Icon: Zap,
+        image: "https://images.unsplash.com/photo-1441986300917-64674bd600d8?q=80&w=2070&auto=format&fit=crop"
     },
 ];
 

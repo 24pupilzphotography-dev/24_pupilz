@@ -1,21 +1,33 @@
 import { LucideIcon } from "lucide-react";
 
+import Image from "next/image";
+
 interface ServiceCardProps {
     title: string;
     description: string;
-    price: string;
     Icon: LucideIcon;
+    image: string;
 }
 
-export default function ServiceCard({ title, description, price, Icon }: ServiceCardProps) {
+export default function ServiceCard({ title, description, Icon, image }: ServiceCardProps) {
     return (
-        <div className="bg-white/5 border border-white/10 p-8 hover:border-accent transition-colors duration-300 group">
-            <div className="mb-6">
-                <Icon className="w-10 h-10 text-accent group-hover:scale-110 transition-transform duration-300" />
+        <div className="bg-white/5 border border-white/10 overflow-hidden group hover:border-accent transition-all duration-300">
+            <div className="relative h-48 w-full overflow-hidden">
+                <Image
+                    src={image}
+                    alt={title}
+                    fill
+                    className="object-cover transition-transform duration-500 group-hover:scale-110 opacity-70 group-hover:opacity-100"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent" />
+                <div className="absolute bottom-4 left-4">
+                    <Icon className="w-8 h-8 text-accent" />
+                </div>
             </div>
-            <h3 className="text-2xl font-serif font-bold mb-4">{title}</h3>
-            <p className="text-gray-400 mb-6 leading-relaxed">{description}</p>
-            <p className="text-accent text-xl font-bold tracking-widest">{price}</p>
+            <div className="p-6">
+                <h3 className="text-2xl font-serif font-bold mb-3">{title}</h3>
+                <p className="text-gray-400 leading-relaxed text-sm">{description}</p>
+            </div>
         </div>
     );
 }

@@ -45,13 +45,11 @@ export default function About() {
                         </p>
 
                         <div className="flex gap-8">
-                            <div>
-                                <span className="block text-4xl font-bold text-accent mb-1">500+</span>
-                                <span className="text-sm uppercase tracking-widest text-gray-400">Happy Clients</span>
-                            </div>
-                            <div>
-                                <span className="block text-4xl font-bold text-accent mb-1">50+</span>
-                                <span className="text-sm uppercase tracking-widest text-gray-400">Awards Won</span>
+                            <div className="flex gap-8">
+                                <div>
+                                    <span className="block text-4xl font-bold text-accent mb-1">100+</span>
+                                    <span className="text-sm uppercase tracking-widest text-gray-400">Happy Clients</span>
+                                </div>
                             </div>
                         </div>
                     </motion.div>

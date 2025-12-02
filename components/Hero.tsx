@@ -6,10 +6,10 @@ import { ChevronDown } from "lucide-react";
 export default function Hero() {
     return (
         <section id="home" className="relative h-screen w-full flex items-center justify-center overflow-hidden">
-            {/* Background Image Placeholder - Replace with actual image */}
+            {/* Background Image */}
             <div
-                className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1492691527719-9d1e07e534b4?q=80&w=2071&auto=format&fit=crop')] 
-        bg-cover bg-center bg-no-repeat opacity-50"
+                className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1452587925148-ce544e77e70d?q=80&w=2074&auto=format&fit=crop')] 
+        bg-cover bg-center bg-no-repeat opacity-40"
             />
 
             <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-black/10 to-black" />
