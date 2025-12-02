@@ -30,22 +30,19 @@ export default function Navbar() {
         <nav
             className={cn(
                 "fixed top-0 w-full z-50 transition-all duration-300",
-                scrolled ? "bg-white/80 backdrop-blur-md py-4 shadow-sm" : "bg-transparent py-6"
+                scrolled ? "bg-black/80 backdrop-blur-md py-4" : "bg-transparent py-6"
             )}
         >
             <div className="container mx-auto px-4 md:px-6 flex justify-between items-center">
                 <Link href="/" className="flex items-center gap-2 group">
-                    <div className="relative w-48 h-20">
+                    <div className="relative w-80 h-32">
                         <Image
-                            src="/logo web.png"
+                            src="/logo%20web.png"
                             alt="24_pupilz Logo"
                             fill
-                            className="object-contain group-hover:rotate-12 transition-transform duration-300"
+                            className="object-contain transition-transform duration-300"
                         />
                     </div>
-                    <span className="text-xl md:text-2xl font-serif font-bold tracking-wider">
-                        24_pupilz
-                    </span>
                 </Link>
 
                 {/* Desktop Nav */}
@@ -63,7 +60,7 @@ export default function Navbar() {
 
                 {/* Mobile Menu Button */}
                 <button
-                    className="md:hidden text-black"
+                    className="md:hidden text-white"
                     onClick={() => setIsOpen(!isOpen)}
                 >
                     {isOpen ? <X /> : <Menu />}
@@ -72,7 +69,7 @@ export default function Navbar() {
 
             {/* Mobile Nav */}
             {isOpen && (
-                <div className="md:hidden absolute top-full left-0 w-full bg-white/95 backdrop-blur-xl border-t border-black/10">
+                <div className="md:hidden absolute top-full left-0 w-full bg-black/95 backdrop-blur-xl border-t border-white/10">
                     <div className="flex flex-col items-center py-8 gap-6">
                         {navItems.map((item) => (
                             <Link
