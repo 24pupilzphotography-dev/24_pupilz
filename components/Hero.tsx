@@ -28,7 +28,7 @@ export default function Hero() {
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.8, delay: 0.4 }}
-                    className="text-lg md:text-2xl text-gray-300 max-w-2xl mx-auto mb-10 font-light"
+                    className="text-lg md:text-2xl text-gray-700 max-w-2xl mx-auto mb-10 font-light drop-shadow-md"
                 >
                     Professional photography that tells your unique story through the lens of 24_pupilz.
                 </motion.p>

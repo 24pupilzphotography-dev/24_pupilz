@@ -10,12 +10,12 @@ const photos = [
     { id: 3, src: "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?q=80&w=1964&auto=format&fit=crop", alt: "Event Photography" },
     { id: 4, src: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=2064&auto=format&fit=crop", alt: "Fashion Photography" },
     { id: 5, src: "https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?q=80&w=2074&auto=format&fit=crop", alt: "Nature Photography" },
-    { id: 6, src: "https://images.unsplash.com/photo-1449824913929-2b3a3e3db216?q=80&w=2078&auto=format&fit=crop", alt: "Urban Photography" },
+    { id: 6, src: "https://images.unsplash.com/photo-1481349518771-20055b2a7b24?q=80&w=2000&auto=format&fit=crop", alt: "Urban Photography" },
 ];
 
 export default function Gallery() {
     return (
-        <section id="gallery" className="py-20 bg-black">
+        <section id="gallery" className="py-20 bg-white">
             <div className="container mx-auto px-4">
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}
