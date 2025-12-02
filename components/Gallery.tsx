@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 import Image from "next/image";
 
+
 const photos = [
     { id: 1, src: "https://images.unsplash.com/photo-1511895426328-dc8714191300?q=80&w=2070&auto=format&fit=crop", alt: "Wedding Photography" },
     { id: 2, src: "https://images.unsplash.com/photo-1519741497674-611481863552?q=80&w=2070&auto=format&fit=crop", alt: "Portrait Photography" },
