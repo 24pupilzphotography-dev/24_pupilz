@@ -2,8 +2,45 @@
 
 import { motion } from "framer-motion";
 import { Mail, Phone, MapPin, Send } from "lucide-react";
+import { useState } from "react";
+import { supabase } from "@/lib/supabase";
 
 export default function Contact() {
+    const [formData, setFormData] = useState({
+        name: "",
+        email: "",
+        subject: "",
+        message: ""
+    });
+    const [loading, setLoading] = useState(false);
+    const [status, setStatus] = useState<"idle" | "success" | "error">("idle");
+
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+        setFormData({ ...formData, [e.target.name]: e.target.value });
+    };
+
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        setLoading(true);
+        setStatus("idle");
+
+        try {
+            const { error } = await supabase
+                .from('messages')
+                .insert([formData]);
+
+            if (error) throw error;
+
+            setStatus("success");
+            setFormData({ name: "", email: "", subject: "", message: "" });
+        } catch (error) {
+            console.error(error);
+            setStatus("error");
+        } finally {
+            setLoading(false);
+        }
+    };
+
     return (
         <section id="contact" className="py-20 bg-zinc-900">
             <div className="container mx-auto px-4">
@@ -47,7 +84,7 @@ export default function Contact() {
                                 </div>
                                 <div>
                                     <p className="text-sm text-gray-400 uppercase tracking-wider">Email</p>
-                                    <p className="text-lg">hello@24pupilz.com</p>
+                                    <p className="text-lg">24pupilzphotography@gmail.com</p>
                                 </div>
                             </div>
 
@@ -70,12 +107,16 @@ export default function Contact() {
                         viewport={{ once: true }}
                         className="bg-black p-8 border border-white/10"
                     >
-                        <form className="space-y-6">
+                        <form onSubmit={handleSubmit} className="space-y-6">
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div>
                                     <label className="block text-sm text-gray-400 mb-2">Name</label>
                                     <input
                                         type="text"
+                                        name="name"
+                                        value={formData.name}
+                                        onChange={handleChange}
+                                        required
                                         className="w-full bg-white/5 border border-white/10 px-4 py-3 focus:outline-none focus:border-accent transition-colors"
                                         placeholder="John Doe"
                                     />
@@ -84,6 +125,10 @@ export default function Contact() {
                                     <label className="block text-sm text-gray-400 mb-2">Email</label>
                                     <input
                                         type="email"
+                                        name="email"
+                                        value={formData.email}
+                                        onChange={handleChange}
+                                        required
                                         className="w-full bg-white/5 border border-white/10 px-4 py-3 focus:outline-none focus:border-accent transition-colors"
                                         placeholder="john@example.com"
                                     />
@@ -93,6 +138,10 @@ export default function Contact() {
                                 <label className="block text-sm text-gray-400 mb-2">Subject</label>
                                 <input
                                     type="text"
+                                    name="subject"
+                                    value={formData.subject}
+                                    onChange={handleChange}
+                                    required
                                     className="w-full bg-white/5 border border-white/10 px-4 py-3 focus:outline-none focus:border-accent transition-colors"
                                     placeholder="Wedding Photography Inquiry"
                                 />
@@ -100,6 +149,10 @@ export default function Contact() {
                             <div>
                                 <label className="block text-sm text-gray-400 mb-2">Message</label>
                                 <textarea
+                                    name="message"
+                                    value={formData.message}
+                                    onChange={handleChange}
+                                    required
                                     rows={4}
                                     className="w-full bg-white/5 border border-white/10 px-4 py-3 focus:outline-none focus:border-accent transition-colors"
                                     placeholder="Tell us about your event..."
@@ -107,10 +160,13 @@ export default function Contact() {
                             </div>
                             <button
                                 type="submit"
-                                className="w-full bg-accent text-black font-bold py-4 uppercase tracking-widest hover:bg-white transition-colors duration-300 flex items-center justify-center gap-2"
+                                disabled={loading}
+                                className={`w-full bg-accent text-black font-bold py-4 uppercase tracking-widest hover:bg-white transition-colors duration-300 flex items-center justify-center gap-2 ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}
                             >
-                                Send Message <Send className="w-4 h-4" />
+                                {loading ? "Sending..." : "Send Message"} <Send className="w-4 h-4" />
                             </button>
+                            {status === "success" && <p className="text-green-400 text-center">Message sent successfully!</p>}
+                            {status === "error" && <p className="text-red-400 text-center">Failed to send message. Please try again.</p>}
                         </form>
                     </motion.div>
                 </div>
