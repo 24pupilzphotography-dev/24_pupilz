@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion";
 import Image from "next/image";
+import { useState } from "react";
 
 
 const photos = [
@@ -14,6 +15,8 @@ const photos = [
 ];
 
 export default function Gallery() {
+    const [tappedId, setTappedId] = useState<number | null>(null);
+
     return (
         <section id="gallery" className="py-20 bg-black">
             <div className="container mx-auto px-4">
@@ -34,17 +37,27 @@ export default function Gallery() {
                             key={photo.id}
                             initial={{ opacity: 0, scale: 0.9 }}
                             whileInView={{ opacity: 1, scale: 1 }}
+                            whileTap={{ scale: 0.95 }}
                             transition={{ duration: 0.5, delay: index * 0.1 }}
                             viewport={{ once: true }}
                             className="relative aspect-[3/4] group overflow-hidden cursor-pointer"
+                            onTouchStart={() => setTappedId(photo.id)}
+                            onTouchEnd={() => setTimeout(() => setTappedId(null), 2000)}
                         >
-                            <Image
-                                src={photo.src}
-                                alt={photo.alt}
-                                fill
-                                className="object-cover transition-transform duration-500 group-hover:scale-110"
-                            />
-                            <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                            <motion.div
+                                animate={{ scale: tappedId === photo.id ? 1.1 : 1 }}
+                                transition={{ duration: 0.5 }}
+                                className="w-full h-full"
+                            >
+                                <Image
+                                    src={photo.src}
+                                    alt={photo.alt}
+                                    fill
+                                    className="object-cover transition-transform duration-500 md:group-hover:scale-110"
+                                />
+                            </motion.div>
+                            <div className={`absolute inset-0 bg-black/50 transition-opacity duration-300 flex items-center justify-center ${tappedId === photo.id ? 'opacity-100' : 'opacity-0 md:group-hover:opacity-100'
+                                }`}>
                                 <span className="text-white font-serif text-xl tracking-widest border-b border-accent pb-1">
                                     {photo.alt}
                                 </span>
