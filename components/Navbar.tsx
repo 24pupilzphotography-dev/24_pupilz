@@ -1,21 +1,11 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { Menu, X } from "lucide-react";
+import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
 import Image from "next/image";
 
-const navItems = [
-    { name: "Home", href: "#home" },
-    { name: "Gallery", href: "#gallery" },
-    { name: "About", href: "#about" },
-    { name: "Services", href: "#services" },
-    { name: "Contact", href: "#contact" },
-];
-
 export default function Navbar() {
-    const [isOpen, setIsOpen] = useState(false);
     const [scrolled, setScrolled] = useState(false);
 
     useEffect(() => {
@@ -33,57 +23,18 @@ export default function Navbar() {
                 scrolled ? "bg-black/80 backdrop-blur-md py-2" : "bg-transparent py-4"
             )}
         >
-            <div className="container mx-auto px-4 md:px-6 flex justify-between items-center">
+            <div className="container mx-auto px-4 md:px-6 flex justify-center items-center">
                 <Link href="/" className="flex items-center gap-2 group">
-                    <div className="relative w-[200px] aspect-[2.8/1] md:w-[300px]">
+                    <div className="relative w-[300px] aspect-[2.8/1] md:w-[450px]">
                         <Image
                             src="/logo%20web.png"
                             alt="24_pupilz Logo"
                             fill
-                            className="object-contain object-left transition-transform duration-300"
+                            className="object-contain transition-transform duration-300"
                         />
                     </div>
                 </Link>
-
-                {/* Desktop Nav */}
-                <div className="hidden md:flex items-center gap-8">
-                    {navItems.map((item) => (
-                        <Link
-                            key={item.name}
-                            href={item.href}
-                            className="text-sm uppercase tracking-widest hover:text-accent transition-colors duration-300"
-                        >
-                            {item.name}
-                        </Link>
-                    ))}
-                </div>
-
-                {/* Mobile Menu Button */}
-                <button
-                    className="md:hidden text-white"
-                    onClick={() => setIsOpen(!isOpen)}
-                >
-                    {isOpen ? <X /> : <Menu />}
-                </button>
             </div>
-
-            {/* Mobile Nav */}
-            {isOpen && (
-                <div className="md:hidden absolute top-full left-0 w-full bg-black/95 backdrop-blur-xl border-t border-white/10">
-                    <div className="flex flex-col items-center py-8 gap-6">
-                        {navItems.map((item) => (
-                            <Link
-                                key={item.name}
-                                href={item.href}
-                                className="text-lg uppercase tracking-widest hover:text-accent transition-colors"
-                                onClick={() => setIsOpen(false)}
-                            >
-                                {item.name}
-                            </Link>
-                        ))}
-                    </div>
-                </div>
-            )}
         </nav>
     );
 }
