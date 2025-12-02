@@ -35,7 +35,7 @@ export default function Navbar() {
         >
             <div className="container mx-auto px-4 md:px-6 flex justify-between items-center">
                 <Link href="/" className="flex items-center gap-2 group">
-                    <div className="relative w-80 h-32">
+                    <div className="relative w-40 h-16 md:w-64 md:h-24">
                         <Image
                             src="/logo%20web.png"
                             alt="24_pupilz Logo"
