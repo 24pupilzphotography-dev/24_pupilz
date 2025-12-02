@@ -30,17 +30,17 @@ export default function Navbar() {
         <nav
             className={cn(
                 "fixed top-0 w-full z-50 transition-all duration-300",
-                scrolled ? "bg-black/80 backdrop-blur-md py-4" : "bg-transparent py-6"
+                scrolled ? "bg-black/80 backdrop-blur-md py-2" : "bg-transparent py-4"
             )}
         >
             <div className="container mx-auto px-4 md:px-6 flex justify-between items-center">
                 <Link href="/" className="flex items-center gap-2 group">
-                    <div className="relative w-40 h-16 md:w-64 md:h-24">
+                    <div className="relative w-[200px] aspect-[2.8/1] md:w-[300px]">
                         <Image
                             src="/logo%20web.png"
                             alt="24_pupilz Logo"
                             fill
-                            className="object-contain transition-transform duration-300"
+                            className="object-contain object-left transition-transform duration-300"
                         />
                     </div>
                 </Link>
