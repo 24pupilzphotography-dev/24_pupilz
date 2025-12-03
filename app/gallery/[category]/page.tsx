@@ -54,11 +54,11 @@ export default function GalleryPage({ params }: { params: Promise<{ category: st
             <div className="max-w-7xl mx-auto">
                 <div className="mb-8">
                     <Link
-                        href="/#services"
+                        href="/#gallery"
                         className="inline-flex items-center text-gray-400 hover:text-white transition-colors mb-4"
                     >
                         <ArrowLeft className="w-4 h-4 mr-2" />
-                        Back to Home
+                        Back to Gallery
                     </Link>
                     <h1 className="text-4xl md:text-6xl font-serif font-bold capitalize">
                         {formatCategory(category)}
