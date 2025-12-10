@@ -18,15 +18,15 @@ const categories = [
     },
     {
         id: "portrait",
-        title: "Portrait Sessions",
+        title: "Baby shower",
     },
     {
         id: "event",
-        title: "Event Coverage",
+        title: "Puberty Ceremony",
     },
     {
         id: "commercial",
-        title: "Commercial Shoots",
+        title: "Photoshoot",
     },
 ];
 

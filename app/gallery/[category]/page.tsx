@@ -80,7 +80,6 @@ export default function GalleryPage({ params }: { params: Promise<{ category: st
                         {images.map((image, index) => (
                             <motion.div
                                 key={image.id}
-                                layoutId={`image-${image.id}`}
                                 initial={{ opacity: 0, y: 20 }}
                                 animate={{ opacity: 1, y: 0 }}
                                 transition={{ duration: 0.5, delay: index * 0.1 }}
@@ -114,7 +113,6 @@ export default function GalleryPage({ params }: { params: Promise<{ category: st
                                 <X className="w-8 h-8" />
                             </button>
                             <motion.div
-                                layoutId={`image-${selectedImage.id}`}
                                 className="relative max-w-7xl max-h-[90vh] w-full h-full flex items-center justify-center"
                                 onClick={(e) => e.stopPropagation()}
                             >
