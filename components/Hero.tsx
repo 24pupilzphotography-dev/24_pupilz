@@ -3,13 +3,34 @@
 import { motion } from "framer-motion";
 import { ChevronDown } from "lucide-react";
 
+import { useState, useEffect } from "react";
+import { supabase } from "@/lib/supabase";
+
 export default function Hero() {
+    const [heroImage, setHeroImage] = useState("https://images.unsplash.com/photo-1452587925148-ce544e77e70d?q=80&w=2074&auto=format&fit=crop");
+
+    useEffect(() => {
+        fetchHeroCover();
+    }, []);
+
+    const fetchHeroCover = async () => {
+        const { data, error } = await supabase
+            .from("section_covers")
+            .select("image_url")
+            .eq("section_id", "hero")
+            .single();
+
+        if (data?.image_url) {
+            setHeroImage(data.image_url);
+        }
+    };
     return (
         <section id="home" className="relative h-screen w-full flex items-center justify-center overflow-hidden">
             {/* Background Image */}
+            {/* Background Image */}
             <div
-                className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1452587925148-ce544e77e70d?q=80&w=2074&auto=format&fit=crop')] 
-        bg-cover bg-center bg-no-repeat opacity-40"
+                className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-40"
+                style={{ backgroundImage: `url('${heroImage}')` }}
             />
 
             <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-black/10 to-black" />

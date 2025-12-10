@@ -332,8 +332,17 @@ export default function AdminPage() {
                                             {covers[img.category] === img.url && (
                                                 <span className="text-xs text-accent mt-1 inline-block">Current Cover</span>
                                             )}
+                                            {covers['hero'] === img.url && (
+                                                <span className="text-xs text-blue-400 mt-1 inline-block block">Current Hero</span>
+                                            )}
                                         </div>
                                         <div className="flex flex-col gap-2">
+                                            <button
+                                                onClick={() => setAsCover(img.url, 'hero')}
+                                                className="text-xs bg-zinc-800 hover:bg-zinc-700 text-white px-2 py-1 rounded transition-colors"
+                                            >
+                                                Set Hero
+                                            </button>
                                             <button
                                                 onClick={() => setAsCover(img.url, img.category)}
                                                 className="text-xs bg-zinc-800 hover:bg-zinc-700 text-white px-2 py-1 rounded transition-colors"
