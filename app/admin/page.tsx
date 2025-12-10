@@ -20,6 +20,11 @@ interface Image {
     created_at: string;
 }
 
+interface SectionCover {
+    section_id: string;
+    image_url: string;
+}
+
 export default function AdminPage() {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [username, setUsername] = useState("");
@@ -30,11 +35,13 @@ export default function AdminPage() {
     const [message, setMessage] = useState("");
     const [messages, setMessages] = useState<Message[]>([]);
     const [images, setImages] = useState<Image[]>([]);
+    const [covers, setCovers] = useState<Record<string, string>>({});
 
     useEffect(() => {
         if (isAuthenticated) {
             fetchMessages();
             fetchImages();
+            fetchCovers();
         }
     }, [isAuthenticated]);
 
@@ -61,6 +68,36 @@ export default function AdminPage() {
             console.error("Error fetching images:", error);
         } else {
             setImages(data || []);
+        }
+    };
+
+    const fetchCovers = async () => {
+        const { data, error } = await supabase
+            .from("section_covers")
+            .select("*");
+
+        if (error) {
+            console.error("Error fetching covers:", error);
+        } else {
+            const coversMap: Record<string, string> = {};
+            data?.forEach((cover: SectionCover) => {
+                coversMap[cover.section_id] = cover.image_url;
+            });
+            setCovers(coversMap);
+        }
+    };
+
+    const setAsCover = async (imageUrl: string, category: string) => {
+        const { error } = await supabase
+            .from("section_covers")
+            .upsert({ section_id: category, image_url: imageUrl });
+
+        if (error) {
+            console.error("Error setting cover:", error);
+            alert("Failed to set cover image");
+        } else {
+            setCovers({ ...covers, [category]: imageUrl });
+            alert(`Updated cover for ${category}`);
         }
     };
 
@@ -283,7 +320,8 @@ export default function AdminPage() {
                                         key={img.id}
                                         initial={{ opacity: 0, x: 20 }}
                                         animate={{ opacity: 1, x: 0 }}
-                                        className="bg-zinc-900 p-4 rounded-lg border border-zinc-800 relative group flex gap-4 items-center"
+                                        className={`bg-zinc-900 p-4 rounded-lg border relative group flex gap-4 items-center ${covers[img.category] === img.url ? 'border-accent' : 'border-zinc-800'
+                                            }`}
                                     >
                                         <div className="w-20 h-20 relative flex-shrink-0">
                                             <img src={img.url} alt={img.category} className="w-full h-full object-cover rounded" />
@@ -291,14 +329,25 @@ export default function AdminPage() {
                                         <div className="flex-1 min-w-0">
                                             <p className="text-sm font-medium text-white truncate capitalize">{img.category}</p>
                                             <p className="text-xs text-gray-500">{new Date(img.created_at).toLocaleDateString()}</p>
+                                            {covers[img.category] === img.url && (
+                                                <span className="text-xs text-accent mt-1 inline-block">Current Cover</span>
+                                            )}
                                         </div>
-                                        <button
-                                            onClick={() => deleteImage(img.id, img.url)}
-                                            className="text-gray-500 hover:text-red-500 transition-colors p-2"
-                                            title="Delete Image"
-                                        >
-                                            ✕
-                                        </button>
+                                        <div className="flex flex-col gap-2">
+                                            <button
+                                                onClick={() => setAsCover(img.url, img.category)}
+                                                className="text-xs bg-zinc-800 hover:bg-zinc-700 text-white px-2 py-1 rounded transition-colors"
+                                            >
+                                                Set Cover
+                                            </button>
+                                            <button
+                                                onClick={() => deleteImage(img.id, img.url)}
+                                                className="text-gray-500 hover:text-red-500 transition-colors p-1 self-end"
+                                                title="Delete Image"
+                                            >
+                                                ✕
+                                            </button>
+                                        </div>
                                     </motion.div>
                                 ))
                             )}

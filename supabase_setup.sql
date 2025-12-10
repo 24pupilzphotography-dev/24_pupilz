@@ -79,3 +79,26 @@ drop policy if exists "Enable delete for everyone" on public.messages;
 create policy "Enable delete for everyone"
   on public.messages for delete
   using ( true );
+
+-- 14. Create section_covers table (New)
+create table if not exists public.section_covers (
+  section_id text primary key,
+  image_url text not null,
+  created_at timestamp with time zone default timezone('utc'::text, now()) not null
+);
+
+-- 15. Enable RLS for section_covers
+alter table public.section_covers enable row level security;
+
+-- 16. Allow public read for section_covers
+drop policy if exists "Enable select for everyone" on public.section_covers;
+create policy "Enable select for everyone"
+  on public.section_covers for select
+  using ( true );
+
+-- 17. Allow authenticated (or public for now) all for section_covers
+drop policy if exists "Enable all for everyone" on public.section_covers;
+create policy "Enable all for everyone"
+  on public.section_covers for all
+  using ( true )
+  with check ( true );

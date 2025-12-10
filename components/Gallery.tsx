@@ -3,7 +3,13 @@
 import { motion } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { supabase } from "@/lib/supabase";
+
+interface SectionCover {
+    section_id: string;
+    image_url: string;
+}
 
 const categories = [
     {
@@ -30,6 +36,27 @@ const categories = [
 
 export default function Gallery() {
     const [tappedId, setTappedId] = useState<string | null>(null);
+    const [covers, setCovers] = useState<Record<string, string>>({});
+
+    useEffect(() => {
+        fetchCovers();
+    }, []);
+
+    const fetchCovers = async () => {
+        const { data, error } = await supabase
+            .from("section_covers")
+            .select("*");
+
+        if (error) {
+            console.error("Error fetching covers:", error);
+        } else {
+            const coversMap: Record<string, string> = {};
+            data?.forEach((cover: SectionCover) => {
+                coversMap[cover.section_id] = cover.image_url;
+            });
+            setCovers(coversMap);
+        }
+    };
 
     return (
         <section id="gallery" className="py-20 bg-black">
@@ -65,9 +92,10 @@ export default function Gallery() {
                                     className="w-full h-full"
                                 >
                                     <Image
-                                        src={category.src}
+                                        src={covers[category.id] || category.src}
                                         alt={category.title}
                                         fill
+                                        unoptimized
                                         className="object-cover transition-transform duration-500 md:group-hover:scale-110"
                                     />
                                 </motion.div>
