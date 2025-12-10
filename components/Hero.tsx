@@ -7,7 +7,7 @@ import { useState, useEffect } from "react";
 import { supabase } from "@/lib/supabase";
 
 export default function Hero() {
-    const [heroImage, setHeroImage] = useState("https://images.unsplash.com/photo-1452587925148-ce544e77e70d?q=80&w=2074&auto=format&fit=crop");
+    const [heroImage, setHeroImage] = useState("");
 
     useEffect(() => {
         fetchHeroCover();

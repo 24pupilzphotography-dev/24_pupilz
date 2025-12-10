@@ -15,22 +15,18 @@ const categories = [
     {
         id: "wedding",
         title: "Wedding Photography",
-        src: "https://images.unsplash.com/photo-1511895426328-dc8714191300?q=80&w=2070&auto=format&fit=crop"
     },
     {
         id: "portrait",
         title: "Portrait Sessions",
-        src: "https://images.unsplash.com/photo-1519741497674-611481863552?q=80&w=2070&auto=format&fit=crop"
     },
     {
         id: "event",
         title: "Event Coverage",
-        src: "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?q=80&w=1964&auto=format&fit=crop"
     },
     {
         id: "commercial",
         title: "Commercial Shoots",
-        src: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=2064&auto=format&fit=crop"
     },
 ];
 
@@ -81,7 +77,7 @@ export default function Gallery() {
                             whileTap={{ scale: 0.95 }}
                             transition={{ duration: 0.5, delay: index * 0.1 }}
                             viewport={{ once: true }}
-                            className="relative aspect-[16/9] group overflow-hidden cursor-pointer rounded-lg"
+                            className="relative aspect-[16/9] group overflow-hidden cursor-pointer rounded-lg bg-zinc-900"
                             onTouchStart={() => setTappedId(category.id)}
                             onTouchEnd={() => setTimeout(() => setTappedId(null), 2000)}
                         >
@@ -91,13 +87,19 @@ export default function Gallery() {
                                     transition={{ duration: 0.5 }}
                                     className="w-full h-full"
                                 >
-                                    <Image
-                                        src={covers[category.id] || category.src}
-                                        alt={category.title}
-                                        fill
-                                        unoptimized
-                                        className="object-cover transition-transform duration-500 md:group-hover:scale-110"
-                                    />
+                                    {covers[category.id] ? (
+                                        <Image
+                                            src={covers[category.id]}
+                                            alt={category.title}
+                                            fill
+                                            unoptimized
+                                            className="object-cover transition-transform duration-500 md:group-hover:scale-110"
+                                        />
+                                    ) : (
+                                        <div className="w-full h-full flex items-center justify-center bg-zinc-900">
+                                            <span className="text-zinc-700">No Cover Image</span>
+                                        </div>
+                                    )}
                                 </motion.div>
                                 <div className={`absolute inset-0 bg-black/40 transition-opacity duration-300 flex items-center justify-center ${tappedId === category.id ? 'opacity-100' : 'opacity-100'
                                     }`}>
