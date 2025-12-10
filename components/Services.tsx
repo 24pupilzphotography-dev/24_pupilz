@@ -12,13 +12,13 @@ const services = [
         image: "https://images.unsplash.com/photo-1519741497674-611481863552?q=80&w=2070&auto=format&fit=crop"
     },
     {
-        title: "Portrait Sessions",
+        title: "Baby Shower",
         description: "Professional headshots, family portraits, and creative personal branding sessions.",
         Icon: Users,
         image: "https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?q=80&w=1964&auto=format&fit=crop"
     },
     {
-        title: "Event Coverage",
+        title: "Puberty Ceremony",
         description: "Comprehensive coverage for corporate events, parties, and special occasions.",
         Icon: Camera,
         image: "https://images.unsplash.com/photo-1511578314322-379afb476865?q=80&w=2071&auto=format&fit=crop"

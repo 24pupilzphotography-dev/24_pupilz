@@ -2,10 +2,27 @@
 
 import { motion } from "framer-motion";
 import Image from "next/image";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { supabase } from "@/lib/supabase";
 
 export default function About() {
     const [isTapped, setIsTapped] = useState(false);
+    const [image, setImage] = useState("https://images.unsplash.com/photo-1492691527719-9d1e07e534b4?q=80&w=2071&auto=format&fit=crop");
+
+    useEffect(() => {
+        const fetchImage = async () => {
+            const { data } = await supabase
+                .from("section_covers")
+                .select("image_url")
+                .eq("section_id", "behind_lens")
+                .single();
+
+            if (data?.image_url) {
+                setImage(data.image_url);
+            }
+        };
+        fetchImage();
+    }, []);
 
     return (
         <section id="about" className="py-20 bg-zinc-900">
@@ -21,9 +38,10 @@ export default function About() {
                         onTouchEnd={() => setTimeout(() => setIsTapped(false), 2000)}
                     >
                         <Image
-                            src="https://images.unsplash.com/photo-1492691527719-9d1e07e534b4?q=80&w=2071&auto=format&fit=crop"
+                            src={image}
                             alt="Photographer"
                             fill
+                            unoptimized
                             className={`object-cover transition-all duration-500 ${isTapped ? '' : 'grayscale'
                                 } md:grayscale md:hover:grayscale-0`}
                         />

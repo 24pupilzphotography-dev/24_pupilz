@@ -267,8 +267,9 @@ export default function AdminPage() {
                                 >
                                     <option value="wedding">Wedding Photography</option>
                                     <option value="event">Event Photography</option>
-                                    <option value="portrait">Portrait Session</option>
+                                    <option value="Baby Shower">Baby Shower</option>
                                     <option value="commercial">Commercial Shoot</option>
+                                    <option value="behind_lens">Behind the Lens</option>
                                 </select>
                             </div>
 

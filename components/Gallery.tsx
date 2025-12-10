@@ -17,11 +17,11 @@ const categories = [
         title: "Wedding Photography",
     },
     {
-        id: "portrait",
+        id: "Baby Shower",
         title: "Baby shower",
     },
     {
-        id: "event",
+        id: "Puberty Ceremony",
         title: "Puberty Ceremony",
     },
     {

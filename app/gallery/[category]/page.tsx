@@ -44,8 +44,8 @@ export default function GalleryPage({ params }: { params: Promise<{ category: st
     const formatCategory = (cat: string) => {
         const map: Record<string, string> = {
             wedding: "Wedding Photography",
-            event: "Event Photography",
-            portrait: "Portrait Sessions",
+            "Puberty Ceremony": "Puberty Ceremony",
+            "Baby Shower": "Baby Shower",
             commercial: "Commercial Shoots",
         };
         return map[cat] || cat;
