@@ -44,10 +44,10 @@ export default function Hero() {
                 <img
                     src="/logo web.png"
                     alt="24_pupilz Logo"
-                    className="w-20 h-20 md:w-28 md:h-28 object-contain"
+                    className="w-12 h-12 md:w-20 md:h-20 object-contain"
                 />
-                <span className="text-white text-xs md:text-sm font-serif font-bold tracking-wide">
-                    24_pupilz_photography
+                <span className="text-white text-lg md:text-2xl font-bold tracking-wide" style={{ fontFamily: 'var(--font-autography)' }}>
+                    24 Pupilz Photography
                 </span>
             </motion.div>
 
