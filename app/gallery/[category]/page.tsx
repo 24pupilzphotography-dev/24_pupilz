@@ -4,7 +4,8 @@ import { useEffect, useState, use } from "react";
 import { supabase } from "@/lib/supabase";
 import { motion } from "framer-motion";
 import Link from "next/link";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, X } from "lucide-react";
+import { AnimatePresence } from "framer-motion";
 
 interface Image {
     id: number;
@@ -16,6 +17,7 @@ interface Image {
 export default function GalleryPage({ params }: { params: Promise<{ category: string }> }) {
     const { category } = use(params);
     const [images, setImages] = useState<Image[]>([]);
+    const [selectedImage, setSelectedImage] = useState<Image | null>(null);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
@@ -74,25 +76,57 @@ export default function GalleryPage({ params }: { params: Promise<{ category: st
                         <p className="text-xl">No images found in this category yet.</p>
                     </div>
                 ) : (
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <div className="columns-1 md:columns-2 lg:columns-3 gap-6 space-y-6">
                         {images.map((image, index) => (
                             <motion.div
                                 key={image.id}
+                                layoutId={`image-${image.id}`}
                                 initial={{ opacity: 0, y: 20 }}
                                 animate={{ opacity: 1, y: 0 }}
                                 transition={{ duration: 0.5, delay: index * 0.1 }}
-                                className="relative aspect-[3/4] overflow-hidden rounded-lg group"
+                                className="relative overflow-hidden rounded-lg group break-inside-avoid mb-6 cursor-pointer"
+                                onClick={() => setSelectedImage(image)}
                             >
                                 <img
                                     src={image.url}
                                     alt={`${category} photo ${index + 1}`}
-                                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                                    className="w-full h-auto object-cover transition-transform duration-500 group-hover:scale-110"
                                 />
                                 <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-300" />
                             </motion.div>
                         ))}
                     </div>
                 )}
+
+                <AnimatePresence>
+                    {selectedImage && (
+                        <motion.div
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            onClick={() => setSelectedImage(null)}
+                            className="fixed inset-0 bg-black/90 z-50 flex items-center justify-center p-4"
+                        >
+                            <button
+                                onClick={() => setSelectedImage(null)}
+                                className="absolute top-4 right-4 text-white hover:text-gray-300 z-50"
+                            >
+                                <X className="w-8 h-8" />
+                            </button>
+                            <motion.div
+                                layoutId={`image-${selectedImage.id}`}
+                                className="relative max-w-7xl max-h-[90vh] w-full h-full flex items-center justify-center"
+                                onClick={(e) => e.stopPropagation()}
+                            >
+                                <img
+                                    src={selectedImage.url}
+                                    alt="Selected view"
+                                    className="max-w-full max-h-full object-contain"
+                                />
+                            </motion.div>
+                        </motion.div>
+                    )}
+                </AnimatePresence>
             </div>
         </div>
     );
