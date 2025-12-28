@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, use } from "react";
+import { useEffect, useState, use, useMemo } from "react";
 import { supabase } from "@/lib/supabase";
 import { motion } from "framer-motion";
 import Link from "next/link";
@@ -15,7 +15,8 @@ interface Image {
 }
 
 export default function GalleryPage({ params }: { params: Promise<{ category: string }> }) {
-    const { category } = use(params);
+    const { category: encodedCategory } = use(params);
+    const category = decodeURIComponent(encodedCategory);
     const [images, setImages] = useState<Image[]>([]);
     const [selectedImage, setSelectedImage] = useState<Image | null>(null);
     const [loading, setLoading] = useState(true);
@@ -51,6 +52,32 @@ export default function GalleryPage({ params }: { params: Promise<{ category: st
         return map[cat] || cat;
     };
 
+    // Hook to determine number of columns based on window width
+    const [columnCount, setColumnCount] = useState(3);
+
+    useEffect(() => {
+        const updateColumns = () => {
+            if (window.innerWidth < 768) setColumnCount(1);
+            else if (window.innerWidth < 1024) setColumnCount(2);
+            else setColumnCount(3);
+        };
+
+        // Initial call
+        updateColumns();
+
+        window.addEventListener("resize", updateColumns);
+        return () => window.removeEventListener("resize", updateColumns);
+    }, []);
+
+    // Distribute images into columns
+    const columns = useMemo(() => {
+        const cols: Image[][] = Array.from({ length: columnCount }, () => []);
+        images.forEach((image, index) => {
+            cols[index % columnCount].push(image);
+        });
+        return cols;
+    }, [images, columnCount]);
+
     return (
         <div className="min-h-screen bg-black text-white p-4 md:p-8 pt-24">
             <div className="max-w-7xl mx-auto">
@@ -76,23 +103,28 @@ export default function GalleryPage({ params }: { params: Promise<{ category: st
                         <p className="text-xl">No images found in this category yet.</p>
                     </div>
                 ) : (
-                    <div className="columns-1 md:columns-2 lg:columns-3 gap-6 space-y-6">
-                        {images.map((image, index) => (
-                            <motion.div
-                                key={image.id}
-                                initial={{ opacity: 0, y: 20 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                transition={{ duration: 0.5, delay: index * 0.1 }}
-                                className="relative overflow-hidden rounded-lg group break-inside-avoid mb-6 cursor-pointer"
-                                onClick={() => setSelectedImage(image)}
-                            >
-                                <img
-                                    src={image.url}
-                                    alt={`${category} photo ${index + 1}`}
-                                    className="w-full h-auto object-cover transition-transform duration-500 group-hover:scale-110"
-                                />
-                                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-300" />
-                            </motion.div>
+                    <div className="flex flex-col md:flex-row gap-6">
+                        {columns.map((col, colIndex) => (
+                            <div key={colIndex} className="flex-1 space-y-6">
+                                {col.map((image, imageIndex) => (
+                                    <motion.div
+                                        key={image.id}
+                                        initial={{ opacity: 0, y: 20 }}
+                                        whileInView={{ opacity: 1, y: 0 }}
+                                        viewport={{ once: true }}
+                                        transition={{ duration: 0.5, delay: imageIndex * 0.1 }}
+                                        className="relative overflow-hidden rounded-lg group cursor-pointer"
+                                        onClick={() => setSelectedImage(image)}
+                                    >
+                                        <img
+                                            src={image.url}
+                                            alt={`${category} photo`}
+                                            className="w-full h-auto object-cover transition-transform duration-700 group-hover:scale-105"
+                                        />
+                                        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-300" />
+                                    </motion.div>
+                                ))}
+                            </div>
                         ))}
                     </div>
                 )}
