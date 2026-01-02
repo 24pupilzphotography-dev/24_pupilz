@@ -1,9 +1,9 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { Menu, X, Phone } from "lucide-react";
-import Link from "next/link";
 
 const navItems = [
     { name: "Home", href: "#home" },
@@ -17,6 +17,10 @@ const navItems = [
 export default function Navbar() {
     const [isScrolled, setIsScrolled] = useState(false);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+    const pathname = usePathname();
+
+    // Hide navbar on admin pages
+    const isAdminPage = pathname?.startsWith("/admin");
 
     useEffect(() => {
         const handleScroll = () => {
@@ -26,6 +30,11 @@ export default function Navbar() {
         window.addEventListener("scroll", handleScroll);
         return () => window.removeEventListener("scroll", handleScroll);
     }, []);
+
+    // Don't render navbar on admin pages
+    if (isAdminPage) {
+        return null;
+    }
 
     const toggleMobileMenu = () => {
         setIsMobileMenuOpen(!isMobileMenuOpen);
