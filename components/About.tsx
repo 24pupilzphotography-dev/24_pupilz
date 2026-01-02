@@ -7,7 +7,6 @@ import { supabase } from "@/lib/supabase";
 
 
 export default function About() {
-    const [isTapped, setIsTapped] = useState(false);
     const [image, setImage] = useState("https://images.unsplash.com/photo-1492691527719-9d1e07e534b4?q=80&w=2071&auto=format&fit=crop");
 
     useEffect(() => {
@@ -35,16 +34,13 @@ export default function About() {
                         transition={{ duration: 0.8 }}
                         viewport={{ once: true }}
                         className="w-full md:w-1/2 relative aspect-[3/4] md:aspect-square"
-                        onTouchStart={() => setIsTapped(true)}
-                        onTouchEnd={() => setTimeout(() => setIsTapped(false), 2000)}
                     >
                         <Image
                             src={image}
                             alt="Photographer"
                             fill
                             unoptimized
-                            className={`object-cover transition-all duration-500 ${isTapped ? '' : 'grayscale'
-                                } md:grayscale md:hover:grayscale-0`}
+                            className="object-cover"
                         />
                         <div className="absolute -bottom-6 -right-6 w-24 h-24 border-2 border-accent z-10" />
                         <div className="absolute -top-6 -left-6 w-24 h-24 border-2 border-black/10 z-0" />

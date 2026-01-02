@@ -1,4 +1,4 @@
-import { Instagram, Facebook, Mail, Phone } from "lucide-react";
+import { Instagram, Mail } from "lucide-react";
 
 export default function Footer() {
     return (
@@ -16,10 +16,7 @@ export default function Footer() {
                         <a href="https://www.instagram.com/24_pupilz__photography/" target="_blank" rel="noopener noreferrer" className="hover:text-accent transition-colors">
                             <Instagram className="w-6 h-6" />
                         </a>
-                        <a href="#" className="hover:text-accent transition-colors">
-                            <Facebook className="w-6 h-6" />
-                        </a>
-                        <a href="mailto:contact@24pupilz.com" className="hover:text-accent transition-colors">
+                        <a href="mailto:24pupilzphotography@gmail.com" className="hover:text-accent transition-colors">
                             <Mail className="w-6 h-6" />
                         </a>
                     </div>
