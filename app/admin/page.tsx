@@ -25,6 +25,15 @@ interface SectionCover {
     image_url: string;
 }
 
+interface Testimonial {
+    id: number;
+    name: string;
+    event: string;
+    feedback: string;
+    location: string | null;
+    created_at: string;
+}
+
 export default function AdminPage() {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [username, setUsername] = useState("");
@@ -39,11 +48,23 @@ export default function AdminPage() {
     const [coverTarget, setCoverTarget] = useState<string>("wedding");
     const [coverSearch, setCoverSearch] = useState<string>("");
 
+    // Client feedback (testimonials)
+    const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
+    const [feedbackForm, setFeedbackForm] = useState({
+        name: "",
+        event: "",
+        location: "",
+        feedback: "",
+    });
+    const [feedbackSaving, setFeedbackSaving] = useState(false);
+    const [feedbackStatus, setFeedbackStatus] = useState<"" | "success" | "error">("");
+
     useEffect(() => {
         if (isAuthenticated) {
             fetchMessages();
             fetchImages();
             fetchCovers();
+            fetchTestimonials();
         }
     }, [isAuthenticated]);
 
@@ -87,6 +108,70 @@ export default function AdminPage() {
             });
             setCovers(coversMap);
         }
+    };
+
+    const fetchTestimonials = async () => {
+        const { data, error } = await supabase
+            .from("testimonials")
+            .select("*")
+            .order("created_at", { ascending: false });
+
+        if (error) {
+            console.error("Error fetching testimonials:", error);
+        } else {
+            setTestimonials((data as Testimonial[]) || []);
+        }
+    };
+
+    const handleFeedbackChange = (
+        e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    ) => {
+        setFeedbackForm({ ...feedbackForm, [e.target.name]: e.target.value });
+    };
+
+    const addTestimonial = async (e: React.FormEvent) => {
+        e.preventDefault();
+        setFeedbackSaving(true);
+        setFeedbackStatus("");
+
+        try {
+            const payload = {
+                name: feedbackForm.name.trim(),
+                event: feedbackForm.event.trim(),
+                location: feedbackForm.location.trim() || null,
+                feedback: feedbackForm.feedback.trim(),
+            };
+
+            if (!payload.name || !payload.event || !payload.feedback) {
+                alert("Name, Event, and Feedback are required.");
+                return;
+            }
+
+            const { error } = await supabase.from("testimonials").insert([payload]);
+            if (error) throw error;
+
+            setFeedbackStatus("success");
+            setFeedbackForm({ name: "", event: "", location: "", feedback: "" });
+            fetchTestimonials();
+        } catch (err) {
+            console.error("Error adding testimonial:", err);
+            setFeedbackStatus("error");
+        } finally {
+            setFeedbackSaving(false);
+        }
+    };
+
+    const deleteTestimonial = async (id: number) => {
+        if (!confirm("Delete this client feedback?")) return;
+
+        const { error } = await supabase.from("testimonials").delete().eq("id", id);
+        if (error) {
+            console.error("Error deleting testimonial:", error);
+            alert("Failed to delete feedback");
+            return;
+        }
+
+        setTestimonials(testimonials.filter((t) => t.id !== id));
     };
 
     const setAsCover = async (imageUrl: string, category: string) => {
@@ -541,6 +626,148 @@ export default function AdminPage() {
                                 ))}
                             </div>
                         )}
+                    </div>
+                </details>
+
+                {/* STEP 4: Client Feedback */}
+                <details className="rounded-2xl border border-white/10 bg-muted/50 backdrop-blur-md p-6 mt-8" open>
+                    <summary className="cursor-pointer select-none list-none">
+                        <div className="flex items-center justify-between gap-4">
+                            <div>
+                                <h2 className="text-xl font-serif">4) Client Feedback</h2>
+                                <p className="text-sm text-muted-foreground mt-1">
+                                    Add testimonials that appear on the homepage.
+                                </p>
+                            </div>
+                            <span className="text-sm text-muted-foreground">Open / Close</span>
+                        </div>
+                    </summary>
+
+                    <div className="mt-6 grid grid-cols-1 lg:grid-cols-2 gap-8">
+                        {/* Add form */}
+                        <div className="rounded-2xl border border-white/10 bg-background/20 p-6">
+                            <h3 className="text-lg font-serif mb-2">Add Feedback</h3>
+                            <p className="text-sm text-muted-foreground mb-5">
+                                Required: Name, Event, Feedback.
+                            </p>
+
+                            <form onSubmit={addTestimonial} className="space-y-4">
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div>
+                                        <label className="block text-sm mb-2 text-muted-foreground">Client Name *</label>
+                                        <input
+                                            name="name"
+                                            value={feedbackForm.name}
+                                            onChange={handleFeedbackChange}
+                                            className="w-full px-4 py-3 rounded-lg bg-background/40 border border-white/10 focus:border-accent outline-none transition-colors"
+                                            placeholder="Priya & Karthik"
+                                            required
+                                        />
+                                    </div>
+                                    <div>
+                                        <label className="block text-sm mb-2 text-muted-foreground">Event *</label>
+                                        <input
+                                            name="event"
+                                            value={feedbackForm.event}
+                                            onChange={handleFeedbackChange}
+                                            className="w-full px-4 py-3 rounded-lg bg-background/40 border border-white/10 focus:border-accent outline-none transition-colors"
+                                            placeholder="Wedding Photography"
+                                            required
+                                        />
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <label className="block text-sm mb-2 text-muted-foreground">Location</label>
+                                    <input
+                                        name="location"
+                                        value={feedbackForm.location}
+                                        onChange={handleFeedbackChange}
+                                        className="w-full px-4 py-3 rounded-lg bg-background/40 border border-white/10 focus:border-accent outline-none transition-colors"
+                                        placeholder="Sathyamangalam"
+                                    />
+                                </div>
+
+                                <div>
+                                    <label className="block text-sm mb-2 text-muted-foreground">Feedback *</label>
+                                    <textarea
+                                        name="feedback"
+                                        value={feedbackForm.feedback}
+                                        onChange={handleFeedbackChange}
+                                        className="w-full px-4 py-3 rounded-lg bg-background/40 border border-white/10 focus:border-accent outline-none transition-colors"
+                                        rows={5}
+                                        placeholder="Write the client's feedback..."
+                                        required
+                                    />
+                                </div>
+
+                                <button
+                                    type="submit"
+                                    disabled={feedbackSaving}
+                                    className={`w-full py-3 rounded-lg font-semibold transition-colors ${
+                                        feedbackSaving
+                                            ? "bg-white/10 text-white/40 cursor-not-allowed"
+                                            : "bg-accent text-accent-foreground hover:bg-accent/90"
+                                    }`}
+                                >
+                                    {feedbackSaving ? "Saving..." : "Add Feedback"}
+                                </button>
+
+                                {feedbackStatus === "success" && (
+                                    <p className="text-center text-sm text-green-400">Added successfully!</p>
+                                )}
+                                {feedbackStatus === "error" && (
+                                    <p className="text-center text-sm text-red-400">Failed to add. Try again.</p>
+                                )}
+                            </form>
+                        </div>
+
+                        {/* List */}
+                        <div className="rounded-2xl border border-white/10 bg-background/20 p-6">
+                            <h3 className="text-lg font-serif mb-2">Existing Feedback</h3>
+                            <p className="text-sm text-muted-foreground mb-5">
+                                This is what shows in the homepage testimonial slider.
+                            </p>
+
+                            {testimonials.length === 0 ? (
+                                <p className="text-muted-foreground">No feedback yet.</p>
+                            ) : (
+                                <div className="space-y-4 max-h-[520px] overflow-y-auto pr-1">
+                                    {testimonials.map((t) => (
+                                        <div
+                                            key={t.id}
+                                            className="rounded-xl border border-white/10 bg-background/25 p-5 relative"
+                                        >
+                                            <button
+                                                onClick={() => deleteTestimonial(t.id)}
+                                                className="absolute top-4 right-4 text-white/40 hover:text-red-400 transition-colors"
+                                                title="Delete feedback"
+                                            >
+                                                ✕
+                                            </button>
+
+                                            <div className="pr-8">
+                                                <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
+                                                    <h4 className="font-semibold text-lg">{t.name}</h4>
+                                                    <span className="text-xs text-muted-foreground uppercase tracking-wider">
+                                                        {t.event}
+                                                    </span>
+                                                </div>
+                                                {t.location && (
+                                                    <p className="text-xs text-muted-foreground mt-1">{t.location}</p>
+                                                )}
+                                                <p className="mt-4 text-sm text-foreground/85 whitespace-pre-wrap leading-relaxed">
+                                                    {t.feedback}
+                                                </p>
+                                                <p className="mt-4 text-xs text-muted-foreground">
+                                                    {new Date(t.created_at).toLocaleString()}
+                                                </p>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
+                        </div>
                     </div>
                 </details>
             </div>

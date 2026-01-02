@@ -3,51 +3,67 @@
 import { motion } from "framer-motion";
 import { useState, useEffect } from "react";
 import { ChevronLeft, ChevronRight, Quote } from "lucide-react";
+import { supabase } from "@/lib/supabase";
 
-const testimonials = [
-    {
-        id: 1,
-        name: "Priya & Karthik",
-        event: "Wedding Photography",
-        text: "Had an amazing experience with 24_pupilz! They captured every precious moment of our wedding beautifully. The team was professional, creative, and made us feel so comfortable throughout the day.",
-        location: "Sathyamangalam",
-    },
-    {
-        id: 2,
-        name: "Divya Lakshmi",
-        event: "Baby Shower",
-        text: "The team at 24_pupilz was wonderful! They captured the joy of our baby shower perfectly. The photos are stunning and we'll cherish them forever. Highly recommend!",
-        location: "Erode",
-    },
-    {
-        id: 3,
-        name: "Ramesh & Family",
-        event: "Puberty Ceremony",
-        text: "Professional, punctual, and incredibly talented. 24_pupilz understood exactly what we wanted and delivered beyond our expectations. The traditional moments were captured with such elegance.",
-        location: "Coimbatore",
-    },
-    {
-        id: 4,
-        name: "Sneha Mohan",
-        event: "Portrait Session",
-        text: "I was amazed by the quality of work. The attention to detail and the creative vision of 24_pupilz is outstanding. They made me feel like a star during the photoshoot!",
-        location: "Salem",
-    },
-];
+type TestimonialRow = {
+    id: number;
+    name: string;
+    event: string;
+    feedback: string;
+    location: string | null;
+    created_at: string;
+};
 
 export default function Testimonials() {
     const [activeIndex, setActiveIndex] = useState(0);
     const [isPaused, setIsPaused] = useState(false);
+    const [testimonials, setTestimonials] = useState<
+        Array<{ id: number; name: string; event: string; feedback: string; location: string }>
+    >([]);
+
+    useEffect(() => {
+        const fetchTestimonials = async () => {
+            const { data, error } = await supabase
+                .from("testimonials")
+                .select("id,name,event,feedback,location,created_at")
+                .order("created_at", { ascending: false });
+
+            if (error) {
+                console.error("Error fetching testimonials:", error);
+                return;
+            }
+
+            if (data && data.length > 0) {
+                setTestimonials(
+                    data.map((t: TestimonialRow) => ({
+                        id: t.id,
+                        name: t.name,
+                        event: t.event,
+                        feedback: t.feedback,
+                        location: t.location ?? "",
+                    }))
+                );
+            }
+        };
+
+        fetchTestimonials();
+    }, []);
 
     useEffect(() => {
         if (isPaused) return;
+        if (!testimonials.length) return;
         
         const interval = setInterval(() => {
             setActiveIndex((prev) => (prev + 1) % testimonials.length);
         }, 5000);
         
         return () => clearInterval(interval);
-    }, [isPaused]);
+    }, [isPaused, testimonials.length]);
+
+    useEffect(() => {
+        // keep index valid if list size changes
+        if (activeIndex >= testimonials.length) setActiveIndex(0);
+    }, [activeIndex, testimonials.length]);
 
     const nextTestimonial = () => {
         setActiveIndex((prev) => (prev + 1) % testimonials.length);
@@ -56,6 +72,8 @@ export default function Testimonials() {
     const prevTestimonial = () => {
         setActiveIndex((prev) => (prev - 1 + testimonials.length) % testimonials.length);
     };
+
+    if (!testimonials.length) return null;
 
     return (
         <section className="py-24 bg-background relative overflow-hidden">
@@ -103,7 +121,7 @@ export default function Testimonials() {
                             className="bg-card border border-border p-8 md:p-12 text-center"
                         >
                             <p className="text-lg md:text-xl text-foreground/90 leading-relaxed mb-8 italic">
-                                "{testimonials[activeIndex].text}"
+                                "{testimonials[activeIndex].feedback}"
                             </p>
                             
                             <div className="flex flex-col items-center">
