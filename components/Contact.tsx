@@ -42,7 +42,7 @@ export default function Contact() {
     };
 
     return (
-        <section id="contact" className="py-20 bg-zinc-900">
+        <section id="contact" className="py-20 bg-background">
             <div className="container mx-auto px-4">
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}
@@ -63,37 +63,37 @@ export default function Contact() {
                         viewport={{ once: true }}
                     >
                         <h3 className="text-2xl font-serif font-bold mb-6">Let's Create Something Beautiful</h3>
-                        <p className="text-gray-400 mb-8">
+                        <p className="text-muted-foreground mb-8">
                             Ready to book a session or have questions? Fill out the form or reach out directly.
                         </p>
 
                         <div className="space-y-6">
                             <div className="flex items-center gap-4">
-                                <div className="w-12 h-12 bg-white/5 flex items-center justify-center rounded-full text-accent">
+                                <div className="w-12 h-12 bg-black/5 flex items-center justify-center rounded-full text-accent">
                                     <Phone className="w-5 h-5" />
                                 </div>
                                 <div>
-                                    <p className="text-sm text-gray-400 uppercase tracking-wider">Phone</p>
+                                    <p className="text-sm text-muted-foreground uppercase tracking-wider">Phone</p>
                                     <p className="text-lg">6369409172</p>
                                 </div>
                             </div>
 
                             <div className="flex items-center gap-4">
-                                <div className="w-12 h-12 bg-white/5 flex items-center justify-center rounded-full text-accent">
+                                <div className="w-12 h-12 bg-black/5 flex items-center justify-center rounded-full text-accent">
                                     <Mail className="w-5 h-5" />
                                 </div>
                                 <div>
-                                    <p className="text-sm text-gray-400 uppercase tracking-wider">Email</p>
+                                    <p className="text-sm text-muted-foreground uppercase tracking-wider">Email</p>
                                     <p className="text-lg">24pupilzphotography@gmail.com</p>
                                 </div>
                             </div>
 
                             <div className="flex items-center gap-4">
-                                <div className="w-12 h-12 bg-white/5 flex items-center justify-center rounded-full text-accent">
+                                <div className="w-12 h-12 bg-black/5 flex items-center justify-center rounded-full text-accent">
                                     <MapPin className="w-5 h-5" />
                                 </div>
                                 <div>
-                                    <p className="text-sm text-gray-400 uppercase tracking-wider">Location</p>
+                                    <p className="text-sm text-muted-foreground uppercase tracking-wider">Location</p>
                                     <p className="text-lg">Sathyamangalam, Erode</p>
                                 </div>
                             </div>
@@ -105,63 +105,63 @@ export default function Contact() {
                         whileInView={{ opacity: 1, x: 0 }}
                         transition={{ duration: 0.6 }}
                         viewport={{ once: true }}
-                        className="bg-black p-8 border border-white/10"
+                        className="bg-background/70 backdrop-blur-sm p-8 border border-black/10 rounded-xl shadow-sm"
                     >
                         <form onSubmit={handleSubmit} className="space-y-6">
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div>
-                                    <label className="block text-sm text-gray-400 mb-2">Name</label>
+                                    <label className="block text-sm text-muted-foreground mb-2">Name</label>
                                     <input
                                         type="text"
                                         name="name"
                                         value={formData.name}
                                         onChange={handleChange}
                                         required
-                                        className="w-full bg-white/5 border border-white/10 px-4 py-3 focus:outline-none focus:border-accent transition-colors"
+                                        className="w-full bg-white/70 border border-black/10 px-4 py-3 focus:outline-none focus:border-accent transition-colors rounded-lg"
                                         placeholder="John Doe"
                                     />
                                 </div>
                                 <div>
-                                    <label className="block text-sm text-gray-400 mb-2">Email</label>
+                                    <label className="block text-sm text-muted-foreground mb-2">Email</label>
                                     <input
                                         type="email"
                                         name="email"
                                         value={formData.email}
                                         onChange={handleChange}
                                         required
-                                        className="w-full bg-white/5 border border-white/10 px-4 py-3 focus:outline-none focus:border-accent transition-colors"
+                                        className="w-full bg-white/70 border border-black/10 px-4 py-3 focus:outline-none focus:border-accent transition-colors rounded-lg"
                                         placeholder="john@example.com"
                                     />
                                 </div>
                             </div>
                             <div>
-                                <label className="block text-sm text-gray-400 mb-2">Subject</label>
+                                <label className="block text-sm text-muted-foreground mb-2">Subject</label>
                                 <input
                                     type="text"
                                     name="subject"
                                     value={formData.subject}
                                     onChange={handleChange}
                                     required
-                                    className="w-full bg-white/5 border border-white/10 px-4 py-3 focus:outline-none focus:border-accent transition-colors"
+                                    className="w-full bg-white/70 border border-black/10 px-4 py-3 focus:outline-none focus:border-accent transition-colors rounded-lg"
                                     placeholder="Wedding Photography Inquiry"
                                 />
                             </div>
                             <div>
-                                <label className="block text-sm text-gray-400 mb-2">Message</label>
+                                <label className="block text-sm text-muted-foreground mb-2">Message</label>
                                 <textarea
                                     name="message"
                                     value={formData.message}
                                     onChange={handleChange}
                                     required
                                     rows={4}
-                                    className="w-full bg-white/5 border border-white/10 px-4 py-3 focus:outline-none focus:border-accent transition-colors"
+                                    className="w-full bg-white/70 border border-black/10 px-4 py-3 focus:outline-none focus:border-accent transition-colors rounded-lg"
                                     placeholder="Tell us about your event..."
                                 ></textarea>
                             </div>
                             <button
                                 type="submit"
                                 disabled={loading}
-                                className={`w-full bg-accent text-black font-bold py-4 uppercase tracking-widest hover:bg-white transition-colors duration-300 flex items-center justify-center gap-2 ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}
+                                className={`w-full bg-accent text-accent-foreground font-bold py-4 uppercase tracking-widest hover:bg-accent/90 transition-colors duration-300 flex items-center justify-center gap-2 ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}
                             >
                                 {loading ? "Sending..." : "Send Message"} <Send className="w-4 h-4" />
                             </button>

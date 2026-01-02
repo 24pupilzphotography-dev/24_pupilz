@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter, Playfair_Display } from "next/font/google";
 import localFont from "next/font/local";
 import "./globals.css";
+import Navbar from "@/components/Navbar";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -31,8 +32,11 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${inter.variable} ${playfair.variable} ${autography.variable} antialiased bg-black text-white`}
+        className={`${inter.variable} ${playfair.variable} ${autography.variable} antialiased bg-background text-foreground`}
       >
+        <header>
+          <Navbar />
+        </header>
         {children}
       </body>
     </html>

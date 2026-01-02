@@ -55,7 +55,7 @@ export default function Gallery() {
     };
 
     return (
-        <section id="gallery" className="py-20 bg-black">
+        <section id="gallery" className="py-20 bg-background">
             <div className="container mx-auto px-4">
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}
@@ -77,7 +77,7 @@ export default function Gallery() {
                             whileTap={{ scale: 0.95 }}
                             transition={{ duration: 0.5, delay: index * 0.1 }}
                             viewport={{ once: true }}
-                            className="relative aspect-[16/9] group overflow-hidden cursor-pointer rounded-lg bg-zinc-900"
+                            className="relative aspect-[16/9] group overflow-hidden cursor-pointer rounded-lg bg-muted border border-black/10"
                             onTouchStart={() => setTappedId(category.id)}
                             onTouchEnd={() => setTimeout(() => setTappedId(null), 2000)}
                         >
@@ -96,8 +96,8 @@ export default function Gallery() {
                                             className="object-cover transition-transform duration-500 md:group-hover:scale-110"
                                         />
                                     ) : (
-                                        <div className="w-full h-full flex items-center justify-center bg-zinc-900">
-                                            <span className="text-zinc-700">No Cover Image</span>
+                                        <div className="w-full h-full flex items-center justify-center bg-muted">
+                                            <span className="text-muted-foreground">No Cover Image</span>
                                         </div>
                                     )}
                                 </motion.div>

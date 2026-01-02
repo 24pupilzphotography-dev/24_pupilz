@@ -33,7 +33,7 @@ export default function Navbar() {
         <>
             <nav
                 className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled
-                    ? "bg-black/95 backdrop-blur-md shadow-lg"
+                    ? "bg-background/85 backdrop-blur-md shadow-lg border-b border-black/10"
                     : "bg-transparent"
                     }`}
             >
@@ -44,20 +44,19 @@ export default function Navbar() {
                             href="#home"
                             className="flex items-center space-x-2"
                             initial={{ opacity: 0, x: -20 }}
-                            animate={{
-                                opacity: isScrolled || isMobileMenuOpen ? 1 : 0,
-                                x: isScrolled || isMobileMenuOpen ? 0 : -20,
-                                pointerEvents: isScrolled || isMobileMenuOpen ? "auto" : "none"
-                            }}
+                            animate={{ opacity: 1, x: 0 }}
                             transition={{ duration: 0.5 }}
                         >
                             <img
                                 src="/logo web.png"
-                                alt="24_pupilz Logo"
+                                alt="24 Pupilz Photography Logo"
                                 className="h-12 w-12 object-contain"
                             />
-                            <span className="text-xl font-serif font-bold tracking-tight hidden sm:inline-block">
-                                24_pupilz
+                            <span
+                                className="text-xl md:text-2xl font-bold tracking-wide hidden sm:inline-block"
+                                style={{ fontFamily: "var(--font-autography)" }}
+                            >
+                                24 Pupilz Photography
                             </span>
                         </motion.a>
 
@@ -72,7 +71,7 @@ export default function Navbar() {
                                 <a
                                     key={item.name}
                                     href={item.href}
-                                    className="text-sm uppercase tracking-wider text-gray-300 hover:text-accent transition-colors duration-300 relative group"
+                                    className="text-sm uppercase tracking-wider text-foreground/70 hover:text-accent transition-colors duration-300 relative group"
                                 >
                                     {item.name}
                                     <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-accent transition-all duration-300 group-hover:w-full"></span>
@@ -82,7 +81,7 @@ export default function Navbar() {
 
                         {/* Mobile Menu Button */}
                         <motion.button
-                            className="md:hidden p-2 text-white hover:text-accent transition-colors duration-300 bg-black/20 backdrop-blur-sm rounded-full"
+                            className="md:hidden p-2 text-foreground hover:text-accent transition-colors duration-300 bg-background/60 backdrop-blur-sm rounded-full border border-black/10"
                             onClick={toggleMobileMenu}
                             aria-label="Toggle mobile menu"
                             initial={{ opacity: 0, x: 20 }}
@@ -111,7 +110,7 @@ export default function Navbar() {
                     >
                         {/* Backdrop */}
                         <div
-                            className="absolute inset-0 bg-black/95 backdrop-blur-md"
+                            className="absolute inset-0 bg-background/92 backdrop-blur-md"
                             onClick={toggleMobileMenu}
                         />
 
@@ -127,7 +126,7 @@ export default function Navbar() {
                                 <motion.a
                                     key={item.name}
                                     href={item.href}
-                                    className="text-2xl font-serif text-white hover:text-accent transition-colors duration-300 py-4"
+                                    className="text-2xl font-serif text-foreground hover:text-accent transition-colors duration-300 py-4"
                                     onClick={toggleMobileMenu}
                                     initial={{ opacity: 0, y: 20 }}
                                     animate={{ opacity: 1, y: 0 }}
