@@ -133,3 +133,10 @@ drop policy if exists "Enable delete for everyone" on public.testimonials;
 create policy "Enable delete for everyone"
   on public.testimonials for delete
   using ( true );
+
+-- 23. Allow public update for testimonials (admin page uses anon key)
+drop policy if exists "Enable update for everyone" on public.testimonials;
+create policy "Enable update for everyone"
+  on public.testimonials for update
+  using ( true )
+  with check ( true );

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { supabase } from "@/lib/supabase";
 import { motion } from "framer-motion";
 
@@ -56,8 +56,10 @@ export default function AdminPage() {
         location: "",
         feedback: "",
     });
+    const [editingTestimonialId, setEditingTestimonialId] = useState<number | null>(null);
     const [feedbackSaving, setFeedbackSaving] = useState(false);
     const [feedbackStatus, setFeedbackStatus] = useState<"" | "success" | "error">("");
+    const feedbackFormSectionRef = useRef<HTMLDivElement | null>(null);
 
     useEffect(() => {
         if (isAuthenticated) {
@@ -129,7 +131,7 @@ export default function AdminPage() {
         setFeedbackForm({ ...feedbackForm, [e.target.name]: e.target.value });
     };
 
-    const addTestimonial = async (e: React.FormEvent) => {
+    const saveTestimonial = async (e: React.FormEvent) => {
         e.preventDefault();
         setFeedbackSaving(true);
         setFeedbackStatus("");
@@ -147,11 +149,20 @@ export default function AdminPage() {
                 return;
             }
 
-            const { error } = await supabase.from("testimonials").insert([payload]);
-            if (error) throw error;
+            if (editingTestimonialId) {
+                const { error } = await supabase
+                    .from("testimonials")
+                    .update(payload)
+                    .eq("id", editingTestimonialId);
+                if (error) throw error;
+            } else {
+                const { error } = await supabase.from("testimonials").insert([payload]);
+                if (error) throw error;
+            }
 
             setFeedbackStatus("success");
             setFeedbackForm({ name: "", event: "", location: "", feedback: "" });
+            setEditingTestimonialId(null);
             fetchTestimonials();
         } catch (err) {
             console.error("Error adding testimonial:", err);
@@ -159,6 +170,27 @@ export default function AdminPage() {
         } finally {
             setFeedbackSaving(false);
         }
+    };
+
+    const startEditTestimonial = (t: Testimonial) => {
+        setFeedbackStatus("");
+        setEditingTestimonialId(t.id);
+        setFeedbackForm({
+            name: t.name ?? "",
+            event: t.event ?? "",
+            location: t.location ?? "",
+            feedback: t.feedback ?? "",
+        });
+        // scroll user to the feedback form area (not top of page)
+        window.setTimeout(() => {
+            feedbackFormSectionRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+        }, 0);
+    };
+
+    const cancelEditTestimonial = () => {
+        setEditingTestimonialId(null);
+        setFeedbackForm({ name: "", event: "", location: "", feedback: "" });
+        setFeedbackStatus("");
     };
 
     const deleteTestimonial = async (id: number) => {
@@ -439,15 +471,19 @@ export default function AdminPage() {
                             ) : (
                                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 max-h-[520px] overflow-y-auto pr-1">
                                     {coverCandidateImages.slice(0, 60).map((img) => (
-                                        <button
+                                        <div
                                             key={img.id}
-                                            type="button"
-                                            onClick={() => setAsCover(img.url, coverTarget)}
-                                            className={`group text-left rounded-xl overflow-hidden border transition-colors ${covers[coverTarget] === img.url ? "border-accent" : "border-white/10 hover:border-white/20"
+                                            className={`group rounded-xl overflow-hidden border transition-colors relative ${covers[coverTarget] === img.url ? "border-accent" : "border-white/10 hover:border-white/20"
                                                 }`}
-                                            title="Click to set as cover"
                                         >
-                                            <div className="aspect-[16/9] bg-background/30 relative">
+                                            {/* Set as cover */}
+                                            <button
+                                                type="button"
+                                                onClick={() => setAsCover(img.url, coverTarget)}
+                                                className="block w-full text-left"
+                                                title="Click to set as cover"
+                                            >
+                                                <div className="aspect-[16/9] bg-background/30 relative">
                                                 <img src={img.url} alt={img.category} className="w-full h-full object-cover" />
                                                 <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors" />
                                                 <div className="absolute bottom-2 left-2 right-2 flex items-center justify-between gap-2">
@@ -461,7 +497,21 @@ export default function AdminPage() {
                                                     )}
                                                 </div>
                                             </div>
-                                        </button>
+                                            </button>
+
+                                            {/* Delete image */}
+                                            <button
+                                                type="button"
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    deleteImage(img.id, img.url);
+                                                }}
+                                                className="absolute top-2 right-2 z-20 text-xs px-3 py-1.5 rounded-full bg-red-600/90 text-white hover:bg-red-600 transition-colors shadow-lg"
+                                                title="Delete this image"
+                                            >
+                                                Delete
+                                            </button>
+                                        </div>
                                     ))}
                                 </div>
                             )}
@@ -556,7 +606,18 @@ export default function AdminPage() {
                             ) : (
                                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                                     {images.slice(0, 6).map((img) => (
-                                        <div key={img.id} className="rounded-xl overflow-hidden border border-white/10 bg-background/25">
+                                        <div
+                                            key={img.id}
+                                            className="rounded-xl overflow-hidden border border-white/10 bg-background/25 relative"
+                                        >
+                                            <button
+                                                type="button"
+                                                onClick={() => deleteImage(img.id, img.url)}
+                                                className="absolute top-2 right-2 z-20 text-xs px-3 py-1.5 rounded-full bg-red-600/90 text-white hover:bg-red-600 transition-colors shadow-lg"
+                                                title="Delete image"
+                                            >
+                                                Delete
+                                            </button>
                                             <div className="aspect-[16/9]">
                                                 <img src={img.url} alt={img.category} className="w-full h-full object-cover" />
                                             </div>
@@ -645,13 +706,15 @@ export default function AdminPage() {
 
                     <div className="mt-6 grid grid-cols-1 lg:grid-cols-2 gap-8">
                         {/* Add form */}
-                        <div className="rounded-2xl border border-white/10 bg-background/20 p-6">
-                            <h3 className="text-lg font-serif mb-2">Add Feedback</h3>
+                        <div ref={feedbackFormSectionRef} className="rounded-2xl border border-white/10 bg-background/20 p-6">
+                            <h3 className="text-lg font-serif mb-2">
+                                {editingTestimonialId ? "Edit Feedback" : "Add Feedback"}
+                            </h3>
                             <p className="text-sm text-muted-foreground mb-5">
                                 Required: Name, Event, Feedback.
                             </p>
 
-                            <form onSubmit={addTestimonial} className="space-y-4">
+                            <form onSubmit={saveTestimonial} className="space-y-4">
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                     <div>
                                         <label className="block text-sm mb-2 text-muted-foreground">Client Name *</label>
@@ -710,8 +773,22 @@ export default function AdminPage() {
                                             : "bg-accent text-accent-foreground hover:bg-accent/90"
                                     }`}
                                 >
-                                    {feedbackSaving ? "Saving..." : "Add Feedback"}
+                                    {feedbackSaving
+                                        ? "Saving..."
+                                        : editingTestimonialId
+                                            ? "Update Feedback"
+                                            : "Add Feedback"}
                                 </button>
+
+                                {editingTestimonialId && (
+                                    <button
+                                        type="button"
+                                        onClick={cancelEditTestimonial}
+                                        className="w-full py-3 rounded-lg font-semibold bg-white/5 border border-white/10 hover:border-white/20 transition-colors"
+                                    >
+                                        Cancel Edit
+                                    </button>
+                                )}
 
                                 {feedbackStatus === "success" && (
                                     <p className="text-center text-sm text-green-400">Added successfully!</p>
@@ -759,6 +836,15 @@ export default function AdminPage() {
                                                 <p className="mt-4 text-sm text-foreground/85 whitespace-pre-wrap leading-relaxed">
                                                     {t.feedback}
                                                 </p>
+                                                <div className="mt-4 flex items-center gap-3">
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => startEditTestimonial(t)}
+                                                        className="text-xs px-3 py-2 rounded-lg bg-white/5 border border-white/10 hover:border-accent/50 transition-colors"
+                                                    >
+                                                        Edit
+                                                    </button>
+                                                </div>
                                                 <p className="mt-4 text-xs text-muted-foreground">
                                                     {new Date(t.created_at).toLocaleString()}
                                                 </p>
