@@ -43,7 +43,7 @@ export default function About() {
                             className="object-cover"
                         />
                         <div className="absolute -bottom-6 -right-6 w-24 h-24 border-2 border-accent z-10" />
-                        <div className="absolute -top-6 -left-6 w-24 h-24 border-2 border-black/10 z-0" />
+                        <div className="absolute -top-6 -left-6 w-24 h-24 border-2 border-white/15 z-0" />
                     </motion.div>
 
                     <motion.div

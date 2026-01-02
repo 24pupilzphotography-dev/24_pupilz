@@ -11,7 +11,7 @@ interface ServiceCardProps {
 
 export default function ServiceCard({ title, description, Icon, image }: ServiceCardProps) {
     return (
-        <div className="bg-background/70 border border-black/10 overflow-hidden group hover:border-accent transition-all duration-300 shadow-sm">
+        <div className="bg-muted/70 border border-white/10 overflow-hidden group hover:border-accent transition-all duration-300 shadow-sm">
             <div className="relative h-48 w-full overflow-hidden">
                 <Image
                     src={image}

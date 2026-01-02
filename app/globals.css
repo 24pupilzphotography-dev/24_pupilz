@@ -1,13 +1,13 @@
 @import "tailwindcss";
 
 :root {
-  /* Light, warm editorial palette */
-  --background: #fbf7f2;
-  --foreground: #0f172a;
-  --accent: #c89b2f; /* soft gold */
-  --accent-foreground: #0b0b0c;
-  --muted: #f2ebe1;
-  --muted-foreground: #64748b;
+  /* Royal dark palette */
+  --background: #070816; /* deep navy */
+  --foreground: #f3f0e8; /* warm ivory */
+  --accent: #d4af37; /* gold */
+  --accent-foreground: #070816;
+  --muted: #0f122a; /* royal midnight */
+  --muted-foreground: #a8b0c2; /* soft slate */
 }
 
 @theme {

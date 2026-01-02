@@ -69,7 +69,7 @@ export default function Contact() {
 
                         <div className="space-y-6">
                             <div className="flex items-center gap-4">
-                                <div className="w-12 h-12 bg-black/5 flex items-center justify-center rounded-full text-accent">
+                                <div className="w-12 h-12 bg-white/5 flex items-center justify-center rounded-full text-accent">
                                     <Phone className="w-5 h-5" />
                                 </div>
                                 <div>
@@ -79,7 +79,7 @@ export default function Contact() {
                             </div>
 
                             <div className="flex items-center gap-4">
-                                <div className="w-12 h-12 bg-black/5 flex items-center justify-center rounded-full text-accent">
+                                <div className="w-12 h-12 bg-white/5 flex items-center justify-center rounded-full text-accent">
                                     <Mail className="w-5 h-5" />
                                 </div>
                                 <div>
@@ -89,7 +89,7 @@ export default function Contact() {
                             </div>
 
                             <div className="flex items-center gap-4">
-                                <div className="w-12 h-12 bg-black/5 flex items-center justify-center rounded-full text-accent">
+                                <div className="w-12 h-12 bg-white/5 flex items-center justify-center rounded-full text-accent">
                                     <MapPin className="w-5 h-5" />
                                 </div>
                                 <div>
@@ -105,7 +105,7 @@ export default function Contact() {
                         whileInView={{ opacity: 1, x: 0 }}
                         transition={{ duration: 0.6 }}
                         viewport={{ once: true }}
-                        className="bg-background/70 backdrop-blur-sm p-8 border border-black/10 rounded-xl shadow-sm"
+                        className="bg-muted/70 backdrop-blur-sm p-8 border border-white/10 rounded-xl shadow-sm"
                     >
                         <form onSubmit={handleSubmit} className="space-y-6">
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -117,7 +117,7 @@ export default function Contact() {
                                         value={formData.name}
                                         onChange={handleChange}
                                         required
-                                        className="w-full bg-white/70 border border-black/10 px-4 py-3 focus:outline-none focus:border-accent transition-colors rounded-lg"
+                                        className="w-full bg-background/40 border border-white/10 px-4 py-3 focus:outline-none focus:border-accent transition-colors rounded-lg"
                                         placeholder="John Doe"
                                     />
                                 </div>
@@ -129,7 +129,7 @@ export default function Contact() {
                                         value={formData.email}
                                         onChange={handleChange}
                                         required
-                                        className="w-full bg-white/70 border border-black/10 px-4 py-3 focus:outline-none focus:border-accent transition-colors rounded-lg"
+                                        className="w-full bg-background/40 border border-white/10 px-4 py-3 focus:outline-none focus:border-accent transition-colors rounded-lg"
                                         placeholder="john@example.com"
                                     />
                                 </div>
@@ -142,7 +142,7 @@ export default function Contact() {
                                     value={formData.subject}
                                     onChange={handleChange}
                                     required
-                                    className="w-full bg-white/70 border border-black/10 px-4 py-3 focus:outline-none focus:border-accent transition-colors rounded-lg"
+                                    className="w-full bg-background/40 border border-white/10 px-4 py-3 focus:outline-none focus:border-accent transition-colors rounded-lg"
                                     placeholder="Wedding Photography Inquiry"
                                 />
                             </div>
@@ -154,7 +154,7 @@ export default function Contact() {
                                     onChange={handleChange}
                                     required
                                     rows={4}
-                                    className="w-full bg-white/70 border border-black/10 px-4 py-3 focus:outline-none focus:border-accent transition-colors rounded-lg"
+                                    className="w-full bg-background/40 border border-white/10 px-4 py-3 focus:outline-none focus:border-accent transition-colors rounded-lg"
                                     placeholder="Tell us about your event..."
                                 ></textarea>
                             </div>

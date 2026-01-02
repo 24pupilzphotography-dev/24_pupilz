@@ -92,9 +92,9 @@ export default function Hero() {
         <section id="home" className="relative w-full pt-24 md:pt-28 pb-16 bg-background">
             {/* Subtle ambient background for light theme */}
             <div className="pointer-events-none absolute inset-0 -z-10">
-                <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(200,155,47,0.18),transparent_60%)]" />
-                <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom,rgba(15,23,42,0.06),transparent_60%)]" />
-                <div className="absolute inset-0 bg-gradient-to-b from-background via-background/70 to-muted" />
+                <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(212,175,55,0.18),transparent_60%)]" />
+                <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom,rgba(99,102,241,0.10),transparent_60%)]" />
+                <div className="absolute inset-0 bg-gradient-to-b from-background via-background/60 to-muted" />
             </div>
 
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

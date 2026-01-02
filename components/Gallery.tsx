@@ -77,7 +77,7 @@ export default function Gallery() {
                             whileTap={{ scale: 0.95 }}
                             transition={{ duration: 0.5, delay: index * 0.1 }}
                             viewport={{ once: true }}
-                            className="relative aspect-[16/9] group overflow-hidden cursor-pointer rounded-lg bg-muted border border-black/10"
+                            className="relative aspect-[16/9] group overflow-hidden cursor-pointer rounded-lg bg-muted border border-white/10"
                             onTouchStart={() => setTappedId(category.id)}
                             onTouchEnd={() => setTimeout(() => setTappedId(null), 2000)}
                         >
@@ -101,7 +101,7 @@ export default function Gallery() {
                                         </div>
                                     )}
                                 </motion.div>
-                                <div className={`absolute inset-0 bg-black/40 transition-opacity duration-300 flex items-center justify-center ${tappedId === category.id ? 'opacity-100' : 'opacity-100'
+                                <div className={`absolute inset-0 bg-black/45 transition-opacity duration-300 flex items-center justify-center ${tappedId === category.id ? 'opacity-100' : 'opacity-100'
                                     }`}>
                                     <span className="text-white font-serif text-2xl md:text-3xl tracking-widest border-b-2 border-accent pb-2 uppercase">
                                         {category.title}

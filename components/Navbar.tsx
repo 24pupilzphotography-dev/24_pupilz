@@ -33,7 +33,7 @@ export default function Navbar() {
         <>
             <nav
                 className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled
-                    ? "bg-background/85 backdrop-blur-md shadow-lg border-b border-black/10"
+                    ? "bg-background/85 backdrop-blur-md shadow-lg border-b border-white/10"
                     : "bg-transparent"
                     }`}
             >
@@ -81,7 +81,7 @@ export default function Navbar() {
 
                         {/* Mobile Menu Button */}
                         <motion.button
-                            className="md:hidden p-2 text-foreground hover:text-accent transition-colors duration-300 bg-background/60 backdrop-blur-sm rounded-full border border-black/10"
+                            className="md:hidden p-2 text-foreground hover:text-accent transition-colors duration-300 bg-background/40 backdrop-blur-sm rounded-full border border-white/10"
                             onClick={toggleMobileMenu}
                             aria-label="Toggle mobile menu"
                             initial={{ opacity: 0, x: 20 }}

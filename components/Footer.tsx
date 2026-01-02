@@ -2,7 +2,7 @@ import { Instagram, Mail } from "lucide-react";
 
 export default function Footer() {
     return (
-        <footer className="bg-muted border-t border-black/10 py-12">
+        <footer className="bg-muted border-t border-white/10 py-12">
             <div className="container mx-auto px-4">
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-center text-center md:text-left">
                     <div>
