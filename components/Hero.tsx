@@ -1,19 +1,15 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { ChevronDown } from "lucide-react";
-
 import { useRef, useState, useEffect } from "react";
 import { supabase } from "@/lib/supabase";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
 export default function Hero() {
     const [slides, setSlides] = useState<string[]>([]);
     const [activeIndex, setActiveIndex] = useState(0);
     const [isPaused, setIsPaused] = useState(false);
-    const containerRef = useRef<HTMLDivElement | null>(null);
-    const cardRefs = useRef<Array<HTMLDivElement | null>>([]);
-    const scrollEndTimerRef = useRef<number | null>(null);
-    const isAutoScrollingRef = useRef(false);
+    const intervalRef = useRef<number | null>(null);
 
     useEffect(() => {
         fetchHeroSlides();
@@ -21,50 +17,17 @@ export default function Hero() {
 
     useEffect(() => {
         if (slides.length <= 1 || isPaused) return;
-        const id = window.setInterval(() => {
+        
+        intervalRef.current = window.setInterval(() => {
             setActiveIndex((prev) => (prev + 1) % slides.length);
-        }, 3500);
-        return () => window.clearInterval(id);
+        }, 4000);
+        
+        return () => {
+            if (intervalRef.current) window.clearInterval(intervalRef.current);
+        };
     }, [slides.length, isPaused]);
 
-    useEffect(() => {
-        const el = cardRefs.current[activeIndex];
-        const container = containerRef.current;
-        if (!el || !container) return;
-        // Smoothly scroll the carousel horizontally only (never scroll the page vertically).
-        const targetLeft = el.offsetLeft - (container.clientWidth - el.clientWidth) / 2;
-        isAutoScrollingRef.current = true;
-        container.scrollTo({ left: targetLeft, behavior: "smooth" });
-        // Release the guard after the smooth scroll likely completes.
-        window.setTimeout(() => {
-            isAutoScrollingRef.current = false;
-        }, 450);
-    }, [activeIndex]);
-
-    const syncActiveIndexFromScroll = () => {
-        const container = containerRef.current;
-        if (!container) return;
-        if (isAutoScrollingRef.current) return;
-
-        const centerX = container.scrollLeft + container.clientWidth / 2;
-        let bestIdx = activeIndex;
-        let bestDist = Number.POSITIVE_INFINITY;
-
-        cardRefs.current.forEach((el, idx) => {
-            if (!el) return;
-            const elCenter = el.offsetLeft + el.clientWidth / 2;
-            const dist = Math.abs(elCenter - centerX);
-            if (dist < bestDist) {
-                bestDist = dist;
-                bestIdx = idx;
-            }
-        });
-
-        if (bestIdx !== activeIndex) setActiveIndex(bestIdx);
-    };
-
     const fetchHeroSlides = async () => {
-        // Pull all images from `images` table for the hero slider
         const { data: imageRows } = await supabase
             .from("images")
             .select("url, created_at")
@@ -79,7 +42,6 @@ export default function Hero() {
             return;
         }
 
-        // Fallback: use the single hero cover if no hero-category images exist
         const { data: coverRow } = await supabase
             .from("section_covers")
             .select("image_url")
@@ -88,129 +50,158 @@ export default function Hero() {
 
         if (coverRow?.image_url) setSlides([coverRow.image_url]);
     };
+
+    const goToSlide = (index: number) => {
+        setActiveIndex(index);
+    };
+
+    const nextSlide = () => {
+        setActiveIndex((prev) => (prev + 1) % slides.length);
+    };
+
+    const prevSlide = () => {
+        setActiveIndex((prev) => (prev - 1 + slides.length) % slides.length);
+    };
+
     return (
-        <section id="home" className="relative w-full pt-24 md:pt-28 pb-16 bg-background">
-            {/* Subtle ambient background for light theme */}
-            <div className="pointer-events-none absolute inset-0 -z-10">
-                <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(212,175,55,0.18),transparent_60%)]" />
-                <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom,rgba(99,102,241,0.10),transparent_60%)]" />
-                <div className="absolute inset-0 bg-gradient-to-b from-background via-background/60 to-muted" />
+        <section 
+            id="home" 
+            className="relative w-full h-screen overflow-hidden"
+            onMouseEnter={() => setIsPaused(true)}
+            onMouseLeave={() => setIsPaused(false)}
+        >
+            {/* Full-screen Image Slider */}
+            <div className="absolute inset-0">
+                {(slides.length ? slides : ["/logo web.png"]).map((src, idx) => (
+                    <motion.div
+                        key={`${src}-${idx}`}
+                        className="absolute inset-0"
+                        initial={{ opacity: 0 }}
+                        animate={{ 
+                            opacity: idx === activeIndex ? 1 : 0,
+                            scale: idx === activeIndex ? 1 : 1.1
+                        }}
+                        transition={{ duration: 1, ease: "easeInOut" }}
+                    >
+                        <img
+                            src={src}
+                            alt={`Hero slide ${idx + 1}`}
+                            className="w-full h-full object-cover"
+                            loading={idx === 0 ? "eager" : "lazy"}
+                        />
+                    </motion.div>
+                ))}
             </div>
 
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                {/* Sliding Image Cards */}
-                <motion.div
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.6 }}
-                    className="relative"
-                >
-                    {/* Make the carousel fill the first viewport so text only appears on scroll */}
-                    <div className="h-[calc(100vh-7rem)] md:h-[calc(100vh-7.5rem)] flex flex-col justify-center">
-                        <div
-                            ref={containerRef}
-                            onMouseEnter={() => setIsPaused(true)}
-                            onMouseLeave={() => setIsPaused(false)}
-                            onTouchStart={() => setIsPaused(true)}
-                            onTouchEnd={() => setIsPaused(false)}
-                            onScroll={() => {
-                                // When user scrolls manually, pause autoplay and resume from that position.
-                                if (!isAutoScrollingRef.current) setIsPaused(true);
-                                if (scrollEndTimerRef.current) window.clearTimeout(scrollEndTimerRef.current);
-                                scrollEndTimerRef.current = window.setTimeout(() => {
-                                    syncActiveIndexFromScroll();
-                                    setIsPaused(false);
-                                }, 180);
-                            }}
-                            className="flex gap-8 overflow-x-auto scroll-smooth snap-x snap-proximity pb-4 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
-                        >
-                            {(slides.length ? slides : ["/logo web.png"]).map((src, idx) => (
-                                <div
-                                    key={`${src}-${idx}`}
-                                    ref={(el) => {
-                                        cardRefs.current[idx] = el;
-                                    }}
-                            className={`snap-center shrink-0 w-[96vw] sm:w-[980px] md:w-[1180px] lg:w-[1320px] h-[62vh] md:h-[68vh] max-h-[760px] rounded-3xl overflow-hidden bg-muted border transition-colors duration-300 ${idx === activeIndex ? "border-accent" : "border-black/10"
-                                        }`}
-                                >
-                                    {/* "Contain" image so it doesn't look cut; add a subtle blurred backdrop to still feel full */}
-                                    <div className="relative w-full h-full">
-                                        <div
-                                            className="absolute inset-0 bg-cover bg-center blur-2xl scale-110 opacity-25"
-                                            style={{ backgroundImage: `url('${src}')` }}
-                                        />
-                                        <img
-                                            src={src}
-                                            alt={`Hero slide ${idx + 1}`}
-                                            className="relative w-full h-full object-contain"
-                                            loading={idx === 0 ? "eager" : "lazy"}
-                                        />
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
+            {/* Gradient Overlay */}
+            <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/20 to-black/70" />
+            <div className="absolute inset-0 bg-gradient-to-r from-black/50 via-transparent to-black/50" />
 
-                        {/* Dots */}
-                        {slides.length > 1 && (
-                            <div className="mt-5 flex justify-center gap-2">
-                                {slides.map((_, idx) => (
-                                    <button
-                                        key={idx}
-                                        type="button"
-                                        onClick={() => setActiveIndex(idx)}
-                                        aria-label={`Go to slide ${idx + 1}`}
-                                        className={`h-2.5 rounded-full transition-all ${idx === activeIndex ? "w-10 bg-accent" : "w-2.5 bg-foreground/20 hover:bg-foreground/30"
-                                            }`}
-                                    />
-                                ))}
-                            </div>
-                        )}
-
-                        <motion.div
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            transition={{ duration: 1, delay: 1 }}
-                            className="mt-10 flex justify-center animate-bounce"
-                        >
-                            <ChevronDown className="w-8 h-8 text-foreground/40" />
-                        </motion.div>
-                    </div>
-                </motion.div>
-
-                {/* Hero Copy (below images; appears when user scrolls past carousel) */}
-                <div className="text-center px-4 mt-16">
-                <motion.h1
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.8, delay: 0.2 }}
-                    className="text-5xl md:text-7xl lg:text-9xl font-serif font-bold mb-6 tracking-tight"
-                >
-                    Capturing <span className="text-accent italic">Soul</span>
-                </motion.h1>
-
-                <motion.p
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.8, delay: 0.4 }}
-                    className="text-lg md:text-2xl text-gray-300 max-w-2xl mx-auto mb-10 font-light"
-                >
-                    Professional photography that tells your unique story through the lens of 24_pupilz.
-                </motion.p>
-
-                <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.8, delay: 0.6 }}
-                >
-                    <a
-                        href="#gallery"
-                        className="px-8 py-3 border border-accent text-accent hover:bg-accent hover:text-black transition-all duration-300 uppercase tracking-widest text-sm"
+            {/* Content Overlay */}
+            <div className="absolute inset-0 flex items-center justify-center">
+                <div className="text-center px-4 max-w-5xl mx-auto">
+                    <motion.p
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.8, delay: 0.2 }}
+                        className="section-subtitle mb-4"
                     >
-                        View Portfolio
-                    </a>
-                </motion.div>
+                        Create your own story with us!
+                    </motion.p>
+
+                    <motion.h1
+                        initial={{ opacity: 0, y: 30 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.8, delay: 0.4 }}
+                        className="text-4xl md:text-6xl lg:text-7xl font-serif font-bold mb-6 leading-tight"
+                    >
+                        Capturing <span className="text-accent italic">Moments</span>
+                        <br />
+                        <span className="text-3xl md:text-5xl lg:text-6xl">That Last Forever</span>
+                    </motion.h1>
+
+                    <motion.p
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.8, delay: 0.6 }}
+                        className="text-lg md:text-xl text-white/80 max-w-2xl mx-auto mb-10"
+                    >
+                        Professional photography that tells your unique story with authenticity and artistry.
+                    </motion.p>
+
+                    <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.8, delay: 0.8 }}
+                        className="flex flex-col sm:flex-row gap-4 justify-center"
+                    >
+                        <a href="#gallery" className="btn-primary">
+                            View Portfolio
+                        </a>
+                        <a href="#contact" className="btn-outline">
+                            Book a Session
+                        </a>
+                    </motion.div>
                 </div>
             </div>
+
+            {/* Navigation Arrows */}
+            {slides.length > 1 && (
+                <>
+                    <button
+                        onClick={prevSlide}
+                        className="absolute left-4 md:left-8 top-1/2 -translate-y-1/2 w-12 h-12 flex items-center justify-center bg-black/30 hover:bg-accent text-white hover:text-black transition-all duration-300 rounded-full backdrop-blur-sm"
+                        aria-label="Previous slide"
+                    >
+                        <ChevronLeft className="w-6 h-6" />
+                    </button>
+                    <button
+                        onClick={nextSlide}
+                        className="absolute right-4 md:right-8 top-1/2 -translate-y-1/2 w-12 h-12 flex items-center justify-center bg-black/30 hover:bg-accent text-white hover:text-black transition-all duration-300 rounded-full backdrop-blur-sm"
+                        aria-label="Next slide"
+                    >
+                        <ChevronRight className="w-6 h-6" />
+                    </button>
+                </>
+            )}
+
+            {/* Slide Indicators */}
+            {slides.length > 1 && (
+                <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex gap-3">
+                    {slides.map((_, idx) => (
+                        <button
+                            key={idx}
+                            type="button"
+                            onClick={() => goToSlide(idx)}
+                            aria-label={`Go to slide ${idx + 1}`}
+                            className={`h-2 rounded-full transition-all duration-500 ${
+                                idx === activeIndex 
+                                    ? "w-12 bg-accent" 
+                                    : "w-2 bg-white/40 hover:bg-white/60"
+                            }`}
+                        />
+                    ))}
+                </div>
+            )}
+
+            {/* Scroll Indicator */}
+            <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 1, delay: 1.5 }}
+                className="absolute bottom-24 left-1/2 -translate-x-1/2"
+            >
+                <div className="flex flex-col items-center gap-2">
+                    <span className="text-xs uppercase tracking-widest text-white/60">Scroll</span>
+                    <motion.div
+                        animate={{ y: [0, 8, 0] }}
+                        transition={{ duration: 1.5, repeat: Infinity }}
+                        className="w-6 h-10 border-2 border-white/30 rounded-full flex justify-center pt-2"
+                    >
+                        <div className="w-1 h-2 bg-accent rounded-full" />
+                    </motion.div>
+                </div>
+            </motion.div>
         </section>
     );
 }

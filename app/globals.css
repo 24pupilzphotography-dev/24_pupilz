@@ -1,13 +1,16 @@
 @import "tailwindcss";
 
 :root {
-  /* Royal dark palette */
-  --background: #070816; /* deep navy */
-  --foreground: #f3f0e8; /* warm ivory */
-  --accent: #d4af37; /* gold */
-  --accent-foreground: #070816;
-  --muted: #0f122a; /* royal midnight */
-  --muted-foreground: #a8b0c2; /* soft slate */
+  /* Focuz-inspired elegant dark palette */
+  --background: #0a0a0a;
+  --foreground: #ffffff;
+  --accent: #c9a962; /* warm gold */
+  --accent-foreground: #0a0a0a;
+  --muted: #141414;
+  --muted-foreground: #9ca3af;
+  --card: #1a1a1a;
+  --card-foreground: #ffffff;
+  --border: rgba(255, 255, 255, 0.1);
 }
 
 @theme {
@@ -20,6 +23,9 @@
   --color-accent-foreground: var(--accent-foreground);
   --color-muted: var(--muted);
   --color-muted-foreground: var(--muted-foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-border: var(--border);
 }
 
 body {
@@ -28,25 +34,19 @@ body {
   font-family: var(--font-sans);
 }
 
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
+h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-serif);
 }
 
 /* Smooth scrolling */
 html {
   scroll-behavior: smooth;
-  /* Keep anchor jumps below the fixed navbar */
   scroll-padding-top: 5rem;
 }
 
 /* Custom Scrollbar */
 ::-webkit-scrollbar {
-  width: 8px;
+  width: 6px;
 }
 
 ::-webkit-scrollbar-track {
@@ -55,9 +55,122 @@ html {
 
 ::-webkit-scrollbar-thumb {
   background: var(--muted);
-  border-radius: 4px;
+  border-radius: 3px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
   background: var(--accent);
+}
+
+/* Focuz-style animations */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.6s ease-out forwards;
+}
+
+.animate-slide-in {
+  animation: slideIn 0.5s ease-out forwards;
+}
+
+/* Section title styling */
+.section-subtitle {
+  font-size: 0.75rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 0.5rem;
+}
+
+.section-title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+}
+
+@media (min-width: 768px) {
+  .section-title {
+    font-size: 3rem;
+  }
+}
+
+/* Card hover effects */
+.card-hover {
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.card-hover:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+}
+
+/* Button styles */
+.btn-primary {
+  background: var(--accent);
+  color: var(--accent-foreground);
+  padding: 0.875rem 2rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-size: 0.875rem;
+  transition: all 0.3s ease;
+  border: 2px solid var(--accent);
+}
+
+.btn-primary:hover {
+  background: transparent;
+  color: var(--accent);
+}
+
+.btn-outline {
+  background: transparent;
+  color: var(--foreground);
+  padding: 0.875rem 2rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-size: 0.875rem;
+  transition: all 0.3s ease;
+  border: 2px solid var(--foreground);
+}
+
+.btn-outline:hover {
+  background: var(--foreground);
+  color: var(--background);
+}
+
+/* Gradient overlays */
+.gradient-overlay {
+  background: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0.1) 0%,
+    rgba(0, 0, 0, 0.6) 100%
+  );
+}
+
+/* Glass effect */
+.glass {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }

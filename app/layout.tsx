@@ -20,8 +20,9 @@ const autography = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "24_pupilz_photography | Capturing Moments",
-  description: "Professional photography portfolio by 24_pupilz_photography. Capturing life's most beautiful moments.",
+  title: "24_pupilz Photography | Capturing Moments That Last Forever",
+  description: "Professional wedding, baby shower, and event photography in Sathyamangalam, Erode. Capturing life's most beautiful moments with authenticity and artistry.",
+  keywords: ["photography", "wedding photography", "baby shower", "Sathyamangalam", "Erode", "Tamil Nadu", "24_pupilz"],
 };
 
 export default function RootLayout({
@@ -34,10 +35,8 @@ export default function RootLayout({
       <body
         className={`${inter.variable} ${playfair.variable} ${autography.variable} antialiased bg-background text-foreground`}
       >
-        <header>
-          <Navbar />
-        </header>
-        <main className="pt-20">{children}</main>
+        <Navbar />
+        {children}
       </body>
     </html>
   );

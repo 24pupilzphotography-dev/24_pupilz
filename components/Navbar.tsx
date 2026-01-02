@@ -2,13 +2,15 @@
 
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X } from "lucide-react";
+import { Menu, X, Phone } from "lucide-react";
+import Link from "next/link";
 
 const navItems = [
     { name: "Home", href: "#home" },
-    { name: "Gallery", href: "#gallery" },
-    { name: "About", href: "#about" },
+    { name: "Portfolio", href: "#gallery" },
     { name: "Services", href: "#services" },
+    { name: "About", href: "#about" },
+    { name: "FAQ", href: "#faq" },
     { name: "Contact", href: "#contact" },
 ];
 
@@ -31,18 +33,41 @@ export default function Navbar() {
 
     return (
         <>
+            {/* Top bar with contact info */}
+            <div className="hidden md:block bg-muted border-b border-border py-2">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center">
+                    <div className="flex items-center gap-6 text-sm text-muted-foreground">
+                        <a href="tel:6369409172" className="flex items-center gap-2 hover:text-accent transition-colors">
+                            <Phone className="w-4 h-4" />
+                            <span>+91 6369409172</span>
+                        </a>
+                    </div>
+                    <div className="flex items-center gap-4">
+                        <a 
+                            href="https://www.instagram.com/24_pupilz__photography/" 
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                            className="text-muted-foreground hover:text-accent transition-colors text-sm"
+                        >
+                            Follow us on Instagram
+                        </a>
+                    </div>
+                </div>
+            </div>
+
             <nav
-                className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled
-                    ? "bg-background/85 backdrop-blur-md shadow-lg border-b border-white/10"
-                    : "bg-transparent"
-                    }`}
+                className={`fixed top-0 md:top-10 left-0 right-0 z-50 transition-all duration-500 ${
+                    isScrolled
+                        ? "bg-background/95 backdrop-blur-xl shadow-2xl md:top-0"
+                        : "bg-transparent"
+                }`}
             >
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="flex items-center justify-between h-20">
                         {/* Logo */}
                         <motion.a
                             href="#home"
-                            className="flex items-center space-x-2"
+                            className="flex items-center gap-3"
                             initial={{ opacity: 0, x: -20 }}
                             animate={{ opacity: 1, x: 0 }}
                             transition={{ duration: 0.5 }}
@@ -50,38 +75,58 @@ export default function Navbar() {
                             <img
                                 src="/logo web.png"
                                 alt="24 Pupilz Photography Logo"
-                                className="h-12 w-12 object-contain"
+                                className="h-14 w-14 object-contain"
                             />
-                            <span
-                                className="text-xl md:text-2xl font-bold tracking-wide hidden sm:inline-block"
-                                style={{ fontFamily: "var(--font-autography)" }}
-                            >
-                                24 Pupilz Photography
-                            </span>
+                            <div className="hidden sm:block">
+                                <span
+                                    className="text-2xl font-bold tracking-wide block"
+                                    style={{ fontFamily: "var(--font-autography)" }}
+                                >
+                                    24 Pupilz
+                                </span>
+                                <span className="text-xs text-muted-foreground tracking-widest uppercase">
+                                    Photography
+                                </span>
+                            </div>
                         </motion.a>
 
                         {/* Desktop Navigation */}
                         <motion.div
-                            className="hidden md:flex items-center space-x-8"
+                            className="hidden lg:flex items-center gap-8"
                             initial={{ opacity: 0, y: -20 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ duration: 0.5, delay: 0.2 }}
                         >
-                            {navItems.map((item, index) => (
+                            {navItems.map((item) => (
                                 <a
                                     key={item.name}
                                     href={item.href}
-                                    className="text-sm uppercase tracking-wider text-foreground/70 hover:text-accent transition-colors duration-300 relative group"
+                                    className="text-sm font-medium text-foreground/80 hover:text-accent transition-colors duration-300 relative group py-2"
                                 >
                                     {item.name}
-                                    <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-accent transition-all duration-300 group-hover:w-full"></span>
+                                    <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-accent transition-all duration-300 group-hover:w-full"></span>
                                 </a>
                             ))}
                         </motion.div>
 
+                        {/* Enquire Now Button */}
+                        <motion.div
+                            className="hidden md:flex items-center gap-4"
+                            initial={{ opacity: 0, x: 20 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            transition={{ duration: 0.5, delay: 0.3 }}
+                        >
+                            <a
+                                href="#contact"
+                                className="btn-primary rounded-none"
+                            >
+                                Enquire Now
+                            </a>
+                        </motion.div>
+
                         {/* Mobile Menu Button */}
                         <motion.button
-                            className="md:hidden p-2 text-foreground hover:text-accent transition-colors duration-300 bg-background/40 backdrop-blur-sm rounded-full border border-white/10"
+                            className="lg:hidden p-2 text-foreground hover:text-accent transition-colors duration-300"
                             onClick={toggleMobileMenu}
                             aria-label="Toggle mobile menu"
                             initial={{ opacity: 0, x: 20 }}
@@ -102,7 +147,7 @@ export default function Navbar() {
             <AnimatePresence>
                 {isMobileMenuOpen && (
                     <motion.div
-                        className="fixed inset-0 z-40 md:hidden"
+                        className="fixed inset-0 z-40 lg:hidden"
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
@@ -110,23 +155,30 @@ export default function Navbar() {
                     >
                         {/* Backdrop */}
                         <div
-                            className="absolute inset-0 bg-background/92 backdrop-blur-md"
+                            className="absolute inset-0 bg-background/98 backdrop-blur-xl"
                             onClick={toggleMobileMenu}
                         />
 
                         {/* Menu Content */}
                         <motion.div
-                            className="relative h-full flex flex-col items-center justify-center"
+                            className="relative h-full flex flex-col items-center justify-center gap-2"
                             initial={{ y: -50, opacity: 0 }}
                             animate={{ y: 0, opacity: 1 }}
                             exit={{ y: -50, opacity: 0 }}
                             transition={{ duration: 0.3, delay: 0.1 }}
                         >
+                            {/* Logo in mobile menu */}
+                            <img
+                                src="/logo web.png"
+                                alt="24 Pupilz Photography Logo"
+                                className="h-20 w-20 object-contain mb-8"
+                            />
+
                             {navItems.map((item, index) => (
                                 <motion.a
                                     key={item.name}
                                     href={item.href}
-                                    className="text-2xl font-serif text-foreground hover:text-accent transition-colors duration-300 py-4"
+                                    className="text-2xl font-serif text-foreground hover:text-accent transition-colors duration-300 py-3"
                                     onClick={toggleMobileMenu}
                                     initial={{ opacity: 0, y: 20 }}
                                     animate={{ opacity: 1, y: 0 }}
@@ -135,6 +187,32 @@ export default function Navbar() {
                                     {item.name}
                                 </motion.a>
                             ))}
+
+                            <motion.a
+                                href="#contact"
+                                className="btn-primary mt-8"
+                                onClick={toggleMobileMenu}
+                                initial={{ opacity: 0, y: 20 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ duration: 0.3, delay: 0.8 }}
+                            >
+                                Enquire Now
+                            </motion.a>
+
+                            {/* Contact info in mobile menu */}
+                            <motion.div
+                                className="absolute bottom-12 flex flex-col items-center gap-2 text-muted-foreground text-sm"
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                transition={{ duration: 0.3, delay: 0.9 }}
+                            >
+                                <a href="tel:6369409172" className="hover:text-accent transition-colors">
+                                    +91 6369409172
+                                </a>
+                                <a href="mailto:24pupilzphotography@gmail.com" className="hover:text-accent transition-colors">
+                                    24pupilzphotography@gmail.com
+                                </a>
+                            </motion.div>
                         </motion.div>
                     </motion.div>
                 )}
