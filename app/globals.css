@@ -40,6 +40,8 @@ h6 {
 /* Smooth scrolling */
 html {
   scroll-behavior: smooth;
+  /* Keep anchor jumps below the fixed navbar */
+  scroll-padding-top: 5rem;
 }
 
 /* Custom Scrollbar */

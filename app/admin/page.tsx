@@ -271,7 +271,7 @@ export default function AdminPage() {
         });
 
     return (
-        <div className="min-h-screen bg-background text-foreground px-4 pt-24 pb-12">
+        <div className="min-h-screen bg-background text-foreground px-4 pb-12">
             <div className="max-w-6xl mx-auto">
                 <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between mb-8">
                     <div>

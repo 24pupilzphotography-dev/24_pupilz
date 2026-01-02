@@ -79,7 +79,7 @@ export default function GalleryPage({ params }: { params: Promise<{ category: st
     }, [images, columnCount]);
 
     return (
-        <div className="min-h-screen bg-black text-white p-4 md:p-8 pt-24">
+        <div className="min-h-screen bg-black text-white p-4 md:p-8">
             <div className="max-w-7xl mx-auto">
                 <div className="mb-8">
                     <Link
