@@ -4,12 +4,29 @@ import { motion } from "framer-motion";
 import { useRef, useState, useEffect } from "react";
 import { supabase } from "@/lib/supabase";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import { AnimatePresence } from "framer-motion";
 
 export default function Hero() {
     const [slides, setSlides] = useState<string[]>([]);
     const [activeIndex, setActiveIndex] = useState(0);
+    const [direction, setDirection] = useState(0);
     const [isPaused, setIsPaused] = useState(false);
     const intervalRef = useRef<number | null>(null);
+
+    const goToSlide = (index: number) => {
+        setDirection(index > activeIndex ? 1 : -1);
+        setActiveIndex(index);
+    };
+
+    const nextSlide = () => {
+        setDirection(1);
+        setActiveIndex((prev) => (prev + 1) % slides.length);
+    };
+
+    const prevSlide = () => {
+        setDirection(-1);
+        setActiveIndex((prev) => (prev - 1 + slides.length) % slides.length);
+    };
 
     useEffect(() => {
         fetchHeroSlides();
@@ -18,14 +35,12 @@ export default function Hero() {
     useEffect(() => {
         if (slides.length <= 1 || isPaused) return;
 
-        intervalRef.current = window.setInterval(() => {
-            setActiveIndex((prev) => (prev + 1) % slides.length);
-        }, 4000);
+        intervalRef.current = window.setInterval(nextSlide, 5000);
 
         return () => {
             if (intervalRef.current) window.clearInterval(intervalRef.current);
         };
-    }, [slides.length, isPaused]);
+    }, [slides.length, isPaused, nextSlide]);
 
     const fetchHeroSlides = async () => {
         const { data: imageRows } = await supabase
@@ -51,17 +66,7 @@ export default function Hero() {
         if (coverRow?.image_url) setSlides([coverRow.image_url]);
     };
 
-    const goToSlide = (index: number) => {
-        setActiveIndex(index);
-    };
 
-    const nextSlide = () => {
-        setActiveIndex((prev) => (prev + 1) % slides.length);
-    };
-
-    const prevSlide = () => {
-        setActiveIndex((prev) => (prev - 1 + slides.length) % slides.length);
-    };
 
     return (
         <section
@@ -72,33 +77,62 @@ export default function Hero() {
         >
             {/* Full-screen Image Slider */}
             <div className="absolute inset-0">
-                {(slides.length ? slides : ["/logo web.png"]).map((src, idx) => (
-                    <motion.div
-                        key={`${src}-${idx}`}
-                        className="absolute inset-0"
-                        initial={{ opacity: 0 }}
-                        animate={{
-                            opacity: idx === activeIndex ? 1 : 0,
-                            scale: idx === activeIndex ? 1 : 1.1
-                        }}
-                        transition={{ duration: 1, ease: "easeInOut" }}
-                    >
-                        <img
-                            src={src}
-                            alt={`Hero slide ${idx + 1}`}
-                            className="w-full h-full object-cover object-top"
-                            loading={idx === 0 ? "eager" : "lazy"}
-                        />
-                    </motion.div>
-                ))}
+                <AnimatePresence initial={false} custom={direction}>
+                    {(slides.length ? slides : ["/logo web.png"]).map((src, idx) => (
+                        idx === activeIndex && (
+                            <motion.div
+                                key={`${src}-${idx}`}
+                                custom={direction}
+                                variants={{
+                                    enter: (direction: number) => ({
+                                        x: direction > 0 ? "100%" : "-100%",
+                                        opacity: 0
+                                    }),
+                                    center: {
+                                        zIndex: 1,
+                                        x: 0,
+                                        opacity: 1
+                                    },
+                                    exit: (direction: number) => ({
+                                        zIndex: 0,
+                                        x: direction < 0 ? "100%" : "-100%",
+                                        opacity: 0
+                                    })
+                                }}
+                                initial="enter"
+                                animate="center"
+                                exit="exit"
+                                transition={{
+                                    x: { type: "spring", stiffness: 300, damping: 30 },
+                                    opacity: { duration: 0.5 }
+                                }}
+                                className="absolute inset-0 bg-black z-0"
+                            >
+                                {/* Blurred background layer */}
+                                <img
+                                    src={src}
+                                    alt=""
+                                    className="absolute inset-0 w-full h-full object-cover blur-3xl opacity-50 transform scale-110 pointer-events-none"
+                                />
+                                {/* Foreground full image */}
+                                <img
+                                    src={src}
+                                    alt={`Hero slide ${idx + 1}`}
+                                    className="relative z-10 w-full h-full object-contain"
+                                    loading={idx === 0 ? "eager" : "lazy"}
+                                />
+                            </motion.div>
+                        )
+                    ))}
+                </AnimatePresence>
             </div>
 
             {/* Gradient Overlay */}
-            <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/20 to-black/70" />
-            <div className="absolute inset-0 bg-gradient-to-r from-black/50 via-transparent to-black/50" />
+            <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/20 to-black/70 z-20" />
+            <div className="absolute inset-0 bg-gradient-to-r from-black/50 via-transparent to-black/50 z-20" />
 
             {/* Content Overlay */}
-            <div className="absolute inset-0 flex items-center justify-center">
+            <div className="absolute inset-0 flex items-center justify-center pt-20 z-30">
                 <div className="text-center px-4 max-w-5xl mx-auto">
                     <motion.p
                         initial={{ opacity: 0, y: 20 }}
@@ -147,39 +181,21 @@ export default function Hero() {
 
             {/* Navigation Arrows */}
             {slides.length > 1 && (
-                <>
+                <div className="absolute inset-0 pointer-events-none z-50">
                     <button
                         onClick={prevSlide}
-                        className="absolute left-4 md:left-8 top-1/2 -translate-y-1/2 w-12 h-12 flex items-center justify-center bg-black/30 hover:bg-accent text-white hover:text-black transition-all duration-300 rounded-full backdrop-blur-sm"
-                        aria-label="Previous slide"
+                        className="absolute left-4 md:left-10 top-1/2 -translate-y-1/2 w-14 h-14 flex items-center justify-center bg-black/50 hover:bg-accent text-white hover:text-black transition-all duration-300 rounded-full backdrop-blur-md border border-white/10 pointer-events-auto group"
+                        aria-label="Previous image"
                     >
-                        <ChevronLeft className="w-6 h-6" />
+                        <ChevronLeft className="w-8 h-8 group-hover:scale-110 transition-transform" />
                     </button>
                     <button
                         onClick={nextSlide}
-                        className="absolute right-4 md:right-8 top-1/2 -translate-y-1/2 w-12 h-12 flex items-center justify-center bg-black/30 hover:bg-accent text-white hover:text-black transition-all duration-300 rounded-full backdrop-blur-sm"
-                        aria-label="Next slide"
+                        className="absolute right-4 md:right-10 top-1/2 -translate-y-1/2 w-14 h-14 flex items-center justify-center bg-black/50 hover:bg-accent text-white hover:text-black transition-all duration-300 rounded-full backdrop-blur-md border border-white/10 pointer-events-auto group"
+                        aria-label="Next image"
                     >
-                        <ChevronRight className="w-6 h-6" />
+                        <ChevronRight className="w-8 h-8 group-hover:scale-110 transition-transform" />
                     </button>
-                </>
-            )}
-
-            {/* Slide Indicators */}
-            {slides.length > 1 && (
-                <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex gap-3">
-                    {slides.map((_, idx) => (
-                        <button
-                            key={idx}
-                            type="button"
-                            onClick={() => goToSlide(idx)}
-                            aria-label={`Go to slide ${idx + 1}`}
-                            className={`h-2 rounded-full transition-all duration-500 ${idx === activeIndex
-                                    ? "w-12 bg-accent"
-                                    : "w-2 bg-white/40 hover:bg-white/60"
-                                }`}
-                        />
-                    ))}
                 </div>
             )}
 
@@ -188,7 +204,7 @@ export default function Hero() {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ duration: 1, delay: 1.5 }}
-                className="absolute bottom-24 left-1/2 -translate-x-1/2"
+                className="absolute bottom-10 left-1/2 -translate-x-1/2 z-40"
             >
                 <div className="flex flex-col items-center gap-2">
                     <span className="text-xs uppercase tracking-widest text-white/60">Scroll</span>
