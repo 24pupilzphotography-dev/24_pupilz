@@ -43,28 +43,42 @@ export default function Hero() {
     }, [slides.length, isPaused, nextSlide]);
 
     const fetchHeroSlides = async () => {
-        const { data: imageRows } = await supabase
+        // 1. Try to fetch images specifically marked for hero
+        const { data: heroImages, error: heroError } = await supabase
             .from("images")
-            .select("url, created_at, show_in_hero")
+            .select("url")
             .eq("show_in_hero", true)
             .order("created_at", { ascending: false });
 
-        const urls = (imageRows ?? [])
-            .map((r: { url: string }) => r.url)
-            .filter(Boolean);
-
-        if (urls.length > 0) {
-            setSlides(urls);
+        if (!heroError && heroImages && heroImages.length > 0) {
+            setSlides(heroImages.map(img => img.url));
             return;
         }
 
+        // 2. Fallback: If no images are marked, fetch 5 most recent images
+        const { data: recentImages } = await supabase
+            .from("images")
+            .select("url")
+            .order("created_at", { ascending: false })
+            .limit(5);
+
+        if (recentImages && recentImages.length > 0) {
+            setSlides(recentImages.map(img => img.url));
+            return;
+        }
+
+        // 3. Last fallback: Section cover or logo
         const { data: coverRow } = await supabase
             .from("section_covers")
             .select("image_url")
             .eq("section_id", "hero")
             .single();
 
-        if (coverRow?.image_url) setSlides([coverRow.image_url]);
+        if (coverRow?.image_url) {
+            setSlides([coverRow.image_url]);
+        } else {
+            setSlides(["/logo web.png"]);
+        }
     };
 
 
