@@ -42,34 +42,13 @@ export default function Navbar() {
 
     return (
         <>
-            {/* Top bar with contact info */}
-            <div className="hidden md:block bg-muted border-b border-border py-2">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center">
-                    <div className="flex items-center gap-6 text-sm text-muted-foreground">
-                        <a href="tel:6369409172" className="flex items-center gap-2 hover:text-accent transition-colors">
-                            <Phone className="w-4 h-4" />
-                            <span>+91 6369409172</span>
-                        </a>
-                    </div>
-                    <div className="flex items-center gap-4">
-                        <a 
-                            href="https://www.instagram.com/24_pupilz__photography/" 
-                            target="_blank" 
-                            rel="noopener noreferrer"
-                            className="text-muted-foreground hover:text-accent transition-colors text-sm"
-                        >
-                            Follow us on Instagram
-                        </a>
-                    </div>
-                </div>
-            </div>
+
 
             <nav
-                className={`fixed top-0 md:top-10 left-0 right-0 z-50 transition-all duration-500 ${
-                    isScrolled
-                        ? "bg-background/95 backdrop-blur-xl shadow-2xl md:top-0"
+                className={`sticky top-0 left-0 right-0 z-50 transition-all duration-500 ${isScrolled
+                        ? "bg-background/95 backdrop-blur-xl shadow-2xl"
                         : "bg-transparent"
-                }`}
+                    }`}
             >
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="flex items-center justify-between h-20">

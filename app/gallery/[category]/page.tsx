@@ -119,7 +119,7 @@ export default function GalleryPage({ params }: { params: Promise<{ category: st
                                         <img
                                             src={image.url}
                                             alt={`${category} photo`}
-                                            className="w-full h-auto object-cover transition-transform duration-700 group-hover:scale-105"
+                                            className="w-full h-auto object-cover object-top transition-transform duration-700 group-hover:scale-105"
                                         />
                                         <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-300" />
                                     </motion.div>

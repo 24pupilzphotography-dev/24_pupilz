@@ -86,25 +86,35 @@ export default function Gallery() {
                             whileInView={{ opacity: 1, y: 0 }}
                             transition={{ duration: 0.5, delay: index * 0.1 }}
                             viewport={{ once: true }}
-                            className={`relative overflow-hidden group ${
-                                index === 0 ? "md:col-span-2 md:row-span-2" : ""
-                            }`}
+                            className={`relative overflow-hidden group ${index === 0 ? "md:col-span-2 md:row-span-2" : ""
+                                }`}
                             onMouseEnter={() => setHoveredId(category.id)}
                             onMouseLeave={() => setHoveredId(null)}
                         >
                             <Link href={`/gallery/${category.id}`} className="block">
-                                <div className={`relative ${
-                                    index === 0 
-                                        ? "aspect-[4/3] md:aspect-[16/10]" 
-                                        : "aspect-[4/3]"
-                                }`}>
+                                <div className={`relative ${index === 0
+                                    ? "aspect-[4/3] md:aspect-[16/10]"
+                                    : "aspect-[4/3]"
+                                    }`}>
                                     {covers[category.id] ? (
                                         <Image
                                             src={covers[category.id]}
                                             alt={category.title}
                                             fill
                                             unoptimized
-                                            className="object-cover transition-transform duration-700 group-hover:scale-110"
+                                            className="object-cover object-top transition-transform duration-700 group-hover:scale-110"
+                                            onError={(e) => {
+                                                // Fallback for broken image
+                                                const target = e.target as HTMLImageElement;
+                                                target.style.display = 'none';
+                                                const parent = target.parentElement;
+                                                if (parent) {
+                                                    const fallback = document.createElement('div');
+                                                    fallback.className = 'w-full h-full flex items-center justify-center bg-muted';
+                                                    fallback.innerHTML = '<span class="text-muted-foreground">Image Unavailable</span>';
+                                                    parent.appendChild(fallback);
+                                                }
+                                            }}
                                         />
                                     ) : (
                                         <div className="w-full h-full flex items-center justify-center bg-muted">
@@ -119,26 +129,25 @@ export default function Gallery() {
                                     <div className="absolute inset-0 flex flex-col justify-end p-6 md:p-8">
                                         <motion.div
                                             initial={{ y: 10, opacity: 0 }}
-                                            animate={{ 
-                                                y: hoveredId === category.id ? 0 : 10, 
-                                                opacity: 1 
+                                            animate={{
+                                                y: hoveredId === category.id ? 0 : 10,
+                                                opacity: 1
                                             }}
                                             transition={{ duration: 0.3 }}
                                         >
                                             <p className="text-accent text-sm uppercase tracking-wider mb-2">
                                                 {category.subtitle}
                                             </p>
-                                            <h3 className={`font-serif font-bold text-white mb-4 ${
-                                                index === 0 
-                                                    ? "text-3xl md:text-4xl" 
-                                                    : "text-xl md:text-2xl"
-                                            }`}>
+                                            <h3 className={`font-serif font-bold text-white mb-4 ${index === 0
+                                                ? "text-3xl md:text-4xl"
+                                                : "text-xl md:text-2xl"
+                                                }`}>
                                                 {category.title}
                                             </h3>
-                                            
+
                                             <motion.div
                                                 initial={{ opacity: 0, x: -10 }}
-                                                animate={{ 
+                                                animate={{
                                                     opacity: hoveredId === category.id ? 1 : 0,
                                                     x: hoveredId === category.id ? 0 : -10
                                                 }}

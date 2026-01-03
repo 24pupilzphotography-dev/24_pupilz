@@ -17,11 +17,11 @@ export default function Hero() {
 
     useEffect(() => {
         if (slides.length <= 1 || isPaused) return;
-        
+
         intervalRef.current = window.setInterval(() => {
             setActiveIndex((prev) => (prev + 1) % slides.length);
         }, 4000);
-        
+
         return () => {
             if (intervalRef.current) window.clearInterval(intervalRef.current);
         };
@@ -64,8 +64,8 @@ export default function Hero() {
     };
 
     return (
-        <section 
-            id="home" 
+        <section
+            id="home"
             className="relative w-full h-screen overflow-hidden"
             onMouseEnter={() => setIsPaused(true)}
             onMouseLeave={() => setIsPaused(false)}
@@ -77,7 +77,7 @@ export default function Hero() {
                         key={`${src}-${idx}`}
                         className="absolute inset-0"
                         initial={{ opacity: 0 }}
-                        animate={{ 
+                        animate={{
                             opacity: idx === activeIndex ? 1 : 0,
                             scale: idx === activeIndex ? 1 : 1.1
                         }}
@@ -86,7 +86,7 @@ export default function Hero() {
                         <img
                             src={src}
                             alt={`Hero slide ${idx + 1}`}
-                            className="w-full h-full object-cover"
+                            className="w-full h-full object-cover object-top"
                             loading={idx === 0 ? "eager" : "lazy"}
                         />
                     </motion.div>
@@ -174,11 +174,10 @@ export default function Hero() {
                             type="button"
                             onClick={() => goToSlide(idx)}
                             aria-label={`Go to slide ${idx + 1}`}
-                            className={`h-2 rounded-full transition-all duration-500 ${
-                                idx === activeIndex 
-                                    ? "w-12 bg-accent" 
+                            className={`h-2 rounded-full transition-all duration-500 ${idx === activeIndex
+                                    ? "w-12 bg-accent"
                                     : "w-2 bg-white/40 hover:bg-white/60"
-                            }`}
+                                }`}
                         />
                     ))}
                 </div>
