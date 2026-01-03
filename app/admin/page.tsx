@@ -17,6 +17,7 @@ interface Image {
     id: number;
     url: string;
     category: string;
+    show_in_hero: boolean;
     created_at: string;
 }
 
@@ -217,6 +218,22 @@ export default function AdminPage() {
         } else {
             setCovers({ ...covers, [category]: imageUrl });
             alert(`Updated cover for ${category}`);
+        }
+    };
+
+    const toggleHeroStatus = async (id: number, currentStatus: boolean) => {
+        const { error } = await supabase
+            .from("images")
+            .update({ show_in_hero: !currentStatus })
+            .eq("id", id);
+
+        if (error) {
+            console.error("Error toggling hero status:", error);
+            alert("Failed to update hero status");
+        } else {
+            setImages(images.map(img =>
+                img.id === id ? { ...img, show_in_hero: !currentStatus } : img
+            ));
         }
     };
 
@@ -484,19 +501,41 @@ export default function AdminPage() {
                                                 title="Click to set as cover"
                                             >
                                                 <div className="aspect-[16/9] bg-background/30 relative">
-                                                <img src={img.url} alt={img.category} className="w-full h-full object-cover" />
-                                                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors" />
-                                                <div className="absolute bottom-2 left-2 right-2 flex items-center justify-between gap-2">
-                                                    <span className="text-[11px] px-2 py-1 rounded-full bg-black/60 text-white/90 truncate">
-                                                        {img.category}
-                                                    </span>
-                                                    {covers[coverTarget] === img.url && (
-                                                        <span className="text-[11px] px-2 py-1 rounded-full bg-accent text-accent-foreground">
-                                                            Active
+                                                    <img src={img.url} alt={img.category} className="w-full h-full object-cover" />
+                                                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors" />
+                                                    <div className="absolute bottom-2 left-2 right-2 flex flex-wrap items-center justify-between gap-2">
+                                                        <span className="text-[11px] px-2 py-1 rounded-full bg-black/60 text-white/90 truncate">
+                                                            {img.category}
                                                         </span>
-                                                    )}
+                                                        <div className="flex gap-1">
+                                                            {img.show_in_hero && (
+                                                                <span className="text-[11px] px-2 py-1 rounded-full bg-blue-500 text-white">
+                                                                    Hero
+                                                                </span>
+                                                            )}
+                                                            {covers[coverTarget] === img.url && (
+                                                                <span className="text-[11px] px-2 py-1 rounded-full bg-accent text-accent-foreground">
+                                                                    Cover
+                                                                </span>
+                                                            )}
+                                                        </div>
+                                                    </div>
                                                 </div>
-                                            </div>
+                                            </button>
+
+                                            {/* Toggle Hero Status */}
+                                            <button
+                                                type="button"
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    toggleHeroStatus(img.id, img.show_in_hero);
+                                                }}
+                                                className={`absolute top-2 left-2 z-20 text-[10px] px-2 py-1 rounded-full transition-colors font-medium shadow-lg ${img.show_in_hero
+                                                        ? "bg-blue-600 text-white hover:bg-blue-700"
+                                                        : "bg-white/10 text-white/70 hover:bg-white/20 backdrop-blur-md"
+                                                    }`}
+                                            >
+                                                {img.show_in_hero ? "In Hero" : "+ Show in Hero"}
                                             </button>
 
                                             {/* Delete image */}
@@ -767,11 +806,10 @@ export default function AdminPage() {
                                 <button
                                     type="submit"
                                     disabled={feedbackSaving}
-                                    className={`w-full py-3 rounded-lg font-semibold transition-colors ${
-                                        feedbackSaving
+                                    className={`w-full py-3 rounded-lg font-semibold transition-colors ${feedbackSaving
                                             ? "bg-white/10 text-white/40 cursor-not-allowed"
                                             : "bg-accent text-accent-foreground hover:bg-accent/90"
-                                    }`}
+                                        }`}
                                 >
                                     {feedbackSaving
                                         ? "Saving..."

@@ -45,7 +45,8 @@ export default function Hero() {
     const fetchHeroSlides = async () => {
         const { data: imageRows } = await supabase
             .from("images")
-            .select("url, created_at")
+            .select("url, created_at, show_in_hero")
+            .eq("show_in_hero", true)
             .order("created_at", { ascending: false });
 
         const urls = (imageRows ?? [])
