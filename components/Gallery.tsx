@@ -93,7 +93,7 @@ export default function Gallery() {
                         >
                             <Link href={`/gallery/${category.id}`} className="block">
                                 <div className={`relative ${index === 0
-                                    ? "aspect-[4/3] md:aspect-[16/10]"
+                                    ? "aspect-[4/3]"
                                     : "aspect-[4/3]"
                                     }`}>
                                     {covers[category.id] ? (
