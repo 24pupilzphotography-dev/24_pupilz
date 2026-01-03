@@ -118,7 +118,7 @@ export default function Hero() {
                                 <img
                                     src={src}
                                     alt={`Hero slide ${idx + 1}`}
-                                    className="relative z-10 w-full h-full object-contain"
+                                    className="relative z-10 w-full h-full object-cover lg:object-contain"
                                     loading={idx === 0 ? "eager" : "lazy"}
                                 />
                             </motion.div>

@@ -65,14 +65,14 @@ export default function Navbar() {
                                 alt="24 Pupilz Photography Logo"
                                 className="h-14 w-14 object-contain"
                             />
-                            <div className="hidden sm:block">
+                            <div className="block">
                                 <span
-                                    className="text-2xl font-bold tracking-wide block"
+                                    className="text-xl sm:text-2xl font-bold tracking-wide block"
                                     style={{ fontFamily: "var(--font-autography)" }}
                                 >
                                     24 Pupilz
                                 </span>
-                                <span className="text-xs text-muted-foreground tracking-widest uppercase">
+                                <span className="text-[10px] sm:text-xs text-muted-foreground tracking-widest uppercase">
                                     Photography
                                 </span>
                             </div>
