@@ -16,7 +16,7 @@ const features = [
 const stats = [
     { number: "100+", label: "Happy Clients", icon: Users },
     { number: "500+", label: "Photos Delivered", icon: Camera },
-    { number: "5+", label: "Years Experience", icon: Award },
+    { number: "2+", label: "Years Experience", icon: Award },
 ];
 
 export default function About() {
@@ -52,16 +52,16 @@ export default function About() {
                     <h2 className="section-title font-serif">Why 24_pupilz?</h2>
                 </motion.div>
 
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-20 items-stretch">
                     {/* Image Side */}
                     <motion.div
                         initial={{ opacity: 0, x: -50 }}
                         whileInView={{ opacity: 1, x: 0 }}
                         transition={{ duration: 0.8 }}
                         viewport={{ once: true }}
-                        className="relative"
+                        className="lg:col-span-5 relative"
                     >
-                        <div className="relative aspect-[4/5] overflow-hidden">
+                        <div className="relative h-full min-h-[400px] lg:min-h-0 overflow-hidden rounded-2xl">
                             <Image
                                 src={image}
                                 alt="24_pupilz Photography"
@@ -81,7 +81,7 @@ export default function About() {
                             viewport={{ once: true }}
                             className="absolute -bottom-6 -left-6 bg-accent text-accent-foreground p-6 shadow-2xl"
                         >
-                            <span className="block text-4xl font-bold">5+</span>
+                            <span className="block text-4xl font-bold">2+</span>
                             <span className="text-sm uppercase tracking-wider">Years of Experience</span>
                         </motion.div>
                     </motion.div>
@@ -92,21 +92,22 @@ export default function About() {
                         whileInView={{ opacity: 1, x: 0 }}
                         transition={{ duration: 0.8 }}
                         viewport={{ once: true }}
+                        className="lg:col-span-7 flex flex-col justify-center"
                     >
                         <h3 className="text-3xl md:text-4xl font-serif font-bold mb-6">
                             Behind the Lens
                         </h3>
-                        
+
                         <p className="text-muted-foreground mb-6 text-lg leading-relaxed">
-                            At <span className="text-accent font-semibold">24_pupilz</span>, we believe that every 
-                            photograph has a story to tell. Our passion lies in capturing the raw, unfiltered 
+                            At <span className="text-accent font-semibold">24_pupilz</span>, we believe that every
+                            photograph has a story to tell. Our passion lies in capturing the raw, unfiltered
                             emotions that make life beautiful.
                         </p>
-                        
+
                         <p className="text-muted-foreground mb-8 leading-relaxed">
-                            With years of experience in various styles of photography, we bring a unique perspective 
-                            to every shoot. Whether it's a grand wedding or an intimate portrait session, we strive 
-                            for perfection in every frame. Trust us to capture your special moments with heart, 
+                            With years of experience in various styles of photography, we bring a unique perspective
+                            to every shoot. Whether it's a grand wedding or an intimate portrait session, we strive
+                            for perfection in every frame. Trust us to capture your special moments with heart,
                             soul, and precision.
                         </p>
 
