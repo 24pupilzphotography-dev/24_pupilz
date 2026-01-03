@@ -1,32 +1,53 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { useRef, useState, useEffect } from "react";
+import { useRef, useState, useEffect, useCallback } from "react";
 import { supabase } from "@/lib/supabase";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { AnimatePresence } from "framer-motion";
 
+import HeroContent from "./HeroContent";
+
+interface Image {
+    url: string;
+    show_in_hero_mobile: boolean;
+    show_in_hero_desktop: boolean;
+}
+
 export default function Hero() {
     const [slides, setSlides] = useState<string[]>([]);
+    const [allSlidesData, setAllSlidesData] = useState<Image[]>([]);
     const [activeIndex, setActiveIndex] = useState(0);
     const [direction, setDirection] = useState(0);
     const [isPaused, setIsPaused] = useState(false);
+    const [isMobile, setIsMobile] = useState(false);
     const intervalRef = useRef<number | null>(null);
 
-    const goToSlide = (index: number) => {
+    const goToSlide = useCallback((index: number) => {
         setDirection(index > activeIndex ? 1 : -1);
         setActiveIndex(index);
-    };
+    }, [activeIndex]);
 
-    const nextSlide = () => {
+    const nextSlide = useCallback(() => {
+        if (slides.length <= 1) return;
         setDirection(1);
         setActiveIndex((prev) => (prev + 1) % slides.length);
-    };
+    }, [slides.length]);
 
-    const prevSlide = () => {
+    const prevSlide = useCallback(() => {
+        if (slides.length <= 1) return;
         setDirection(-1);
         setActiveIndex((prev) => (prev - 1 + slides.length) % slides.length);
-    };
+    }, [slides.length]);
+
+    useEffect(() => {
+        const checkMobile = () => {
+            setIsMobile(window.innerWidth < 1024);
+        };
+        checkMobile();
+        window.addEventListener('resize', checkMobile);
+        return () => window.removeEventListener('resize', checkMobile);
+    }, []);
 
     useEffect(() => {
         fetchHeroSlides();
@@ -42,50 +63,72 @@ export default function Hero() {
         };
     }, [slides.length, isPaused, nextSlide]);
 
+    useEffect(() => {
+        // Update slides whenever isMobile or allSlidesData changes
+        if (allSlidesData.length > 0) {
+            const filtered = allSlidesData
+                .filter(img => isMobile ? img.show_in_hero_mobile : img.show_in_hero_desktop)
+                .map(img => img.url);
+
+            if (filtered.length > 0) {
+                setSlides(filtered);
+                // Reset index if current one is out of bounds
+                if (activeIndex >= filtered.length) setActiveIndex(0);
+                return;
+            }
+
+            // Fallback if no device-specific images are found
+            const fallback = allSlidesData.slice(0, 5).map(img => img.url);
+            setSlides(fallback);
+        }
+    }, [isMobile, allSlidesData]);
+
     const fetchHeroSlides = async () => {
         try {
-            // Fetch all images and filter in JS to be 100% sure about the data
-            const { data: allImages, error: fetchError } = await supabase
+            // Try fetching with specific hero flags first
+            let { data: allImages, error: fetchError } = await supabase
                 .from("images")
-                .select("url, show_in_hero")
+                .select("url, show_in_hero_mobile, show_in_hero_desktop")
                 .order("created_at", { ascending: false });
 
-            if (fetchError) throw fetchError;
+            // If it fails (likely missing columns), fallback to just URL
+            if (fetchError) {
+                console.warn("Hero flags fetch failed, falling back to basic fetch:", fetchError.message);
+                const { data: fallbackImages, error: fallbackError } = await supabase
+                    .from("images")
+                    .select("url")
+                    .order("created_at", { ascending: false });
 
-            // 1. Filter for images specifically marked for hero
-            const heroUrls = (allImages ?? [])
-                .filter(img => img.show_in_hero === true)
-                .map(img => img.url);
+                if (fallbackError) throw fallbackError;
 
-            if (heroUrls.length > 0) {
-                setSlides(heroUrls);
-                return;
+                // Manually add flags to the fallback data so the filtering logic doesn't crash
+                allImages = (fallbackImages ?? []).map(img => ({
+                    ...img,
+                    show_in_hero_mobile: false,
+                    show_in_hero_desktop: false
+                }));
             }
 
-            // 2. Fallback: If no images are marked, use 5 most recent images
-            const recentUrls = (allImages ?? [])
-                .slice(0, 5)
-                .map(img => img.url);
-
-            if (recentUrls.length > 0) {
-                setSlides(recentUrls);
-                return;
+            if (allImages) {
+                setAllSlidesData(allImages as any);
             }
 
-            // 3. Last fallback: Section cover or logo
-            const { data: coverRow } = await supabase
-                .from("section_covers")
-                .select("image_url")
-                .eq("section_id", "hero")
-                .single();
+            // If no images at all, fall back to cover or logo
+            if (!allImages || allImages.length === 0) {
+                const { data: coverRow } = await supabase
+                    .from("section_covers")
+                    .select("image_url")
+                    .eq("section_id", "hero")
+                    .single();
 
-            if (coverRow?.image_url) {
-                setSlides([coverRow.image_url]);
-            } else {
-                setSlides(["/logo web.png"]);
+                if (coverRow?.image_url) {
+                    setSlides([coverRow.image_url]);
+                } else {
+                    setSlides(["/logo web.png"]);
+                }
             }
         } catch (error) {
-            console.error("Error in fetchHeroSlides:", error);
+            console.error("Critical error in fetchHeroSlides:", error);
             setSlides(["/logo web.png"]);
         }
     };
@@ -95,7 +138,7 @@ export default function Hero() {
     return (
         <section
             id="home"
-            className="relative w-full h-screen overflow-hidden"
+            className="relative w-full h-[calc(100vh-80px)] overflow-hidden"
             onMouseEnter={() => setIsPaused(true)}
             onMouseLeave={() => setIsPaused(false)}
         >
@@ -142,7 +185,7 @@ export default function Hero() {
                                 <img
                                     src={src}
                                     alt={`Hero slide ${idx + 1}`}
-                                    className="relative z-10 w-full h-full object-cover lg:object-contain"
+                                    className="relative z-10 w-full h-full object-cover"
                                     loading={idx === 0 ? "eager" : "lazy"}
                                 />
                             </motion.div>
@@ -156,52 +199,7 @@ export default function Hero() {
             <div className="absolute inset-0 bg-gradient-to-r from-black/50 via-transparent to-black/50 z-20" />
 
             {/* Content Overlay */}
-            <div className="absolute inset-0 flex items-center justify-center pt-20 z-30">
-                <div className="text-center px-4 max-w-5xl mx-auto">
-                    <motion.p
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.8, delay: 0.2 }}
-                        className="section-subtitle mb-4"
-                    >
-                        Create your own story with us!
-                    </motion.p>
-
-                    <motion.h1
-                        initial={{ opacity: 0, y: 30 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.8, delay: 0.4 }}
-                        className="text-4xl md:text-6xl lg:text-7xl font-serif font-bold mb-6 leading-tight"
-                    >
-                        Capturing <span className="text-accent italic">Moments</span>
-                        <br />
-                        <span className="text-3xl md:text-5xl lg:text-6xl">That Last Forever</span>
-                    </motion.h1>
-
-                    <motion.p
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.8, delay: 0.6 }}
-                        className="text-lg md:text-xl text-white/80 max-w-2xl mx-auto mb-10"
-                    >
-                        Professional photography that tells your unique story with authenticity and artistry.
-                    </motion.p>
-
-                    <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.8, delay: 0.8 }}
-                        className="flex flex-col sm:flex-row gap-4 justify-center"
-                    >
-                        <a href="#gallery" className="btn-primary">
-                            View Portfolio
-                        </a>
-                        <a href="#contact" className="btn-outline">
-                            Book a Session
-                        </a>
-                    </motion.div>
-                </div>
-            </div>
+            <HeroContent />
 
             {/* Navigation Arrows */}
             {slides.length > 1 && (

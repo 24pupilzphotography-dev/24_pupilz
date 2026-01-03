@@ -17,7 +17,8 @@ interface Image {
     id: number;
     url: string;
     category: string;
-    show_in_hero: boolean;
+    show_in_hero_mobile: boolean;
+    show_in_hero_desktop: boolean;
     created_at: string;
 }
 
@@ -221,18 +222,19 @@ export default function AdminPage() {
         }
     };
 
-    const toggleHeroStatus = async (id: number, currentStatus: boolean) => {
+    const toggleHeroDevice = async (id: number, currentStatus: boolean, device: 'mobile' | 'desktop') => {
+        const column = device === 'mobile' ? 'show_in_hero_mobile' : 'show_in_hero_desktop';
         const { error } = await supabase
             .from("images")
-            .update({ show_in_hero: !currentStatus })
+            .update({ [column]: !currentStatus })
             .eq("id", id);
 
         if (error) {
-            console.error("Error toggling hero status:", error);
-            alert("Failed to update hero status");
+            console.error(`Error toggling hero ${device} status:`, error);
+            alert(`Failed to update hero ${device} status`);
         } else {
             setImages(images.map(img =>
-                img.id === id ? { ...img, show_in_hero: !currentStatus } : img
+                img.id === id ? { ...img, [column]: !currentStatus } : img
             ));
         }
     };
@@ -508,13 +510,18 @@ export default function AdminPage() {
                                                             {img.category}
                                                         </span>
                                                         <div className="flex gap-1">
-                                                            {img.show_in_hero && (
-                                                                <span className="text-[11px] px-2 py-1 rounded-full bg-blue-500 text-white">
-                                                                    Hero
+                                                            {img.show_in_hero_mobile && (
+                                                                <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-blue-500 text-white">
+                                                                    Mob
+                                                                </span>
+                                                            )}
+                                                            {img.show_in_hero_desktop && (
+                                                                <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-indigo-500 text-white">
+                                                                    Desk
                                                                 </span>
                                                             )}
                                                             {covers[coverTarget] === img.url && (
-                                                                <span className="text-[11px] px-2 py-1 rounded-full bg-accent text-accent-foreground">
+                                                                <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-accent text-accent-foreground">
                                                                     Cover
                                                                 </span>
                                                             )}
@@ -523,20 +530,35 @@ export default function AdminPage() {
                                                 </div>
                                             </button>
 
-                                            {/* Toggle Hero Status */}
-                                            <button
-                                                type="button"
-                                                onClick={(e) => {
-                                                    e.stopPropagation();
-                                                    toggleHeroStatus(img.id, img.show_in_hero);
-                                                }}
-                                                className={`absolute top-2 left-2 z-20 text-[10px] px-2 py-1 rounded-full transition-colors font-medium shadow-lg ${img.show_in_hero
-                                                    ? "bg-blue-600 text-white hover:bg-blue-700"
-                                                    : "bg-white/10 text-white/70 hover:bg-white/20 backdrop-blur-md"
-                                                    }`}
-                                            >
-                                                {img.show_in_hero ? "In Hero" : "+ Show in Hero"}
-                                            </button>
+                                            {/* Toggle Hero Device Status */}
+                                            <div className="absolute top-2 left-2 z-20 flex flex-col gap-1">
+                                                <button
+                                                    type="button"
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        toggleHeroDevice(img.id, img.show_in_hero_mobile, 'mobile');
+                                                    }}
+                                                    className={`text-[9px] px-2 py-1 rounded-full transition-colors font-medium shadow-lg backdrop-blur-md ${img.show_in_hero_mobile
+                                                            ? "bg-blue-600 text-white"
+                                                            : "bg-black/40 text-white/70 hover:bg-black/60"
+                                                        }`}
+                                                >
+                                                    {img.show_in_hero_mobile ? "In Mob Hero" : "+ Mob Hero"}
+                                                </button>
+                                                <button
+                                                    type="button"
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        toggleHeroDevice(img.id, img.show_in_hero_desktop, 'desktop');
+                                                    }}
+                                                    className={`text-[9px] px-2 py-1 rounded-full transition-colors font-medium shadow-lg backdrop-blur-md ${img.show_in_hero_desktop
+                                                            ? "bg-indigo-600 text-white"
+                                                            : "bg-black/40 text-white/70 hover:bg-black/60"
+                                                        }`}
+                                                >
+                                                    {img.show_in_hero_desktop ? "In Desk Hero" : "+ Desk Hero"}
+                                                </button>
+                                            </div>
 
                                             {/* Delete image */}
                                             <button
