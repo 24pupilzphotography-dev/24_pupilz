@@ -531,8 +531,8 @@ export default function AdminPage() {
                                                     toggleHeroStatus(img.id, img.show_in_hero);
                                                 }}
                                                 className={`absolute top-2 left-2 z-20 text-[10px] px-2 py-1 rounded-full transition-colors font-medium shadow-lg ${img.show_in_hero
-                                                        ? "bg-blue-600 text-white hover:bg-blue-700"
-                                                        : "bg-white/10 text-white/70 hover:bg-white/20 backdrop-blur-md"
+                                                    ? "bg-blue-600 text-white hover:bg-blue-700"
+                                                    : "bg-white/10 text-white/70 hover:bg-white/20 backdrop-blur-md"
                                                     }`}
                                             >
                                                 {img.show_in_hero ? "In Hero" : "+ Show in Hero"}
@@ -807,8 +807,8 @@ export default function AdminPage() {
                                     type="submit"
                                     disabled={feedbackSaving}
                                     className={`w-full py-3 rounded-lg font-semibold transition-colors ${feedbackSaving
-                                            ? "bg-white/10 text-white/40 cursor-not-allowed"
-                                            : "bg-accent text-accent-foreground hover:bg-accent/90"
+                                        ? "bg-white/10 text-white/40 cursor-not-allowed"
+                                        : "bg-accent text-accent-foreground hover:bg-accent/90"
                                         }`}
                                 >
                                     {feedbackSaving
