@@ -86,14 +86,14 @@ export default function Gallery() {
                             whileInView={{ opacity: 1, y: 0 }}
                             transition={{ duration: 0.5, delay: index * 0.1 }}
                             viewport={{ once: true }}
-                            className={`relative overflow-hidden group ${index === 0 ? "md:col-span-2 md:row-span-2" : ""
+                            className={`relative group ${index === 0 ? "md:col-span-2 md:row-span-2" : ""
                                 }`}
                             onMouseEnter={() => setHoveredId(category.id)}
                             onMouseLeave={() => setHoveredId(null)}
                         >
-                            <Link href={`/gallery/${category.id}`} className="block">
-                                <div className={`relative ${index === 0
-                                    ? "aspect-[4/3]"
+                            <Link href={`/gallery/${category.id}`} className={`block ${index === 0 ? "md:h-full" : ""}`}>
+                                <div className={`relative overflow-hidden rounded-2xl ${index === 0
+                                    ? "aspect-[4/3] md:aspect-auto md:h-full"
                                     : "aspect-[4/3]"
                                     }`}>
                                     {covers[category.id] ? (
